@@ -1,0 +1,16 @@
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+
+# Tools
+tools/node_modules/
+
+# Secrets
+.env
+.env.local
+
+# OS
+.DS_Store

@@ -1,0 +1,61 @@
+# Dependências (evita copiar node_modules gigantes)
+**/node_modules/
+**/npm-debug.log
+
+# Builds
+**/dist/
+**/build/
+**/.next/
+**/out/
+
+# Arquivos de ambiente
+**/.env
+**/.env.local
+**/.env.production
+
+# Git e IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+
+# Logs
+**/logs/
+**/*.log
+
+# Banco de dados local
+**/*.sqlite
+**/*.db
+
+# Testes
+**/coverage/
+**/.nyc_output/
+**/test/
+
+# Arquivos temporários
+**/tmp/
+**/temp/
+**/*.tmp
+
+# Documentação (desnecessária no container)
+**/docs/
+**/README.md
+**/LICENSE
+
+# Ferramentas
+**/.github/
+**/.gitlab/
+**/tools/
+**/prompts/
+**/scripts/
+
+# Sistemas operacionais
+**/.DS_Store
+**/Thumbs.db
+
+# Arquivos grandes
+**/*.zip
+**/*.tar.gz
+**/*.mp4
+**/*.psd
