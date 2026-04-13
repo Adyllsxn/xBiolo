@@ -7,8 +7,19 @@ import { AuthModule } from './presentation/modules/identity/auth/auth.module';
 import { AccountModule } from './presentation/modules/identity/account/account.module';
 import { PasswordModule } from './presentation/modules/identity/password/password.module';
 import { PermissionModule } from './presentation/modules/identity/permission/permission.module';
+import { CommonModule } from './presentation/common/common.module';
 
 @Module({
-  imports: [PrismaModule, CategoryModule, SystemModule, ProductModule, AuthModule, AccountModule, PasswordModule, PermissionModule],
+  imports: [
+    PrismaModule,
+    CategoryModule,
+    SystemModule,
+    ProductModule,
+    AuthModule,
+    AccountModule,
+    PasswordModule,
+    PermissionModule,
+    CommonModule,
+  ],
 })
 export class AppModule {}
