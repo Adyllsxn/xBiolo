@@ -3,12 +3,16 @@ generator client {
   output   = "../src/infrastructure/generated/prisma"
   moduleFormat = "cjs"
 }
+datasource db {
+  provider = "postgresql"
+}
+
 
 // ============================================
 // CATEGORIAS
 // ============================================
 model Category {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String   @unique
   slug        String   @unique
   description String?

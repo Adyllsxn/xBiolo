@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
+import { ICategoryService } from 'src/core/interfaces/categoryService.interface.ts';
+import { ICategory } from 'src/core/types/category.type';
 
 @Injectable()
-export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+export class CategoryService implements ICategoryService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findAll(): Promise<ICategory[]> {
+    return await this.prismaService.category.findMany();
   }
 
-  findAll() {
-    return `This action returns all category`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
-
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async findOne(id: string): Promise<ICategory | null> {
+    return await this.prismaService.category.findUnique({
+      where: { id },
+    });
   }
 }

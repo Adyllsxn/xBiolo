@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SystemService } from './system.service';
-import { CreateSystemDto } from './dto/create-system.dto';
-import { UpdateSystemDto } from './dto/update-system.dto';
 
+@ApiTags('system')
 @Controller('system')
 export class SystemController {
   constructor(private readonly systemService: SystemService) {}
 
-  @Post()
-  create(@Body() createSystemDto: CreateSystemDto) {
-    return this.systemService.create(createSystemDto);
+  @Get('info')
+  @ApiOperation({
+    summary: 'Informações do Sistema',
+    description: 'Retorna informações sobre a API, servidor e uso de memória',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Informações obtidas com sucesso',
+    schema: {
+      example: {
+        application: 'Biolo API',
+        version: '1.0.0',
+        description: 'Catálogo digital com finalização no WhatsApp',
+        environment: 'development',
+        server: 'parrot',
+        timestamp: '2026-04-13T12:00:00.000Z',
+        uptime: '0d 0h 5m',
+        memoryUsage: '147.06 MB',
+      },
+    },
+  })
+  getSystemInfo() {
+    return this.systemService.getSystemInfo();
   }
 
-  @Get()
-  findAll() {
-    return this.systemService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.systemService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSystemDto: UpdateSystemDto) {
-    return this.systemService.update(+id, updateSystemDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.systemService.remove(+id);
+  @Get('health')
+  @ApiOperation({
+    summary: 'Health Check',
+    description: 'Verifica o status da API e conexão com o banco de dados',
+  })
+  @ApiResponse({ status: 200, description: 'Sistema saudável' })
+  @ApiResponse({ status: 503, description: 'Sistema não saudável' })
+  async getHealth() {
+    return this.systemService.getHealth();
   }
 }
