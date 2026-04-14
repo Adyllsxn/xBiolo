@@ -1,0 +1,32 @@
+### Listar todas categorias
+GET http://localhost:3001/categories
+
+
+### Buscar categoria por ID
+GET http://localhost:3001/categories/37d01a5e-7ec4-45f9-b155-03a8c52c2f70
+
+### Criar nova categoria
+POST http://localhost:3001/categories
+Content-Type: application/json
+
+{
+  "name": "Casacos",
+  "slug": "casacos",
+  "description": "Casacos para frio",
+  "order": 6,
+  "active": true
+}
+
+### Atualizar categoria
+PATCH http://localhost:3001/categories/37d01a5e-7ec4-45f9-b155-03a8c52c2f70
+Content-Type: application/json
+
+{
+  "name": "Vestidos Longos"
+}
+
+### Deletar categoria (soft delete)
+DELETE http://localhost:3001/categories/37d01a5e-7ec4-45f9-b155-03a8c52c2f70
+
+### Restaurar categoria
+PATCH http://localhost:3001/categories/37d01a5e-7ec4-45f9-b155-03a8c52c2f70/restore

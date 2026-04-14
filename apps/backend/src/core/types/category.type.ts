@@ -7,4 +7,5 @@ export type ICategory = {
   order: number;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 };

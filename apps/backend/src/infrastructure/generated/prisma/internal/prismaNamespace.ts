@@ -524,6 +524,7 @@ export const CategoryScalarFieldEnum = {
   description: 'description',
   active: 'active',
   order: 'order',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
