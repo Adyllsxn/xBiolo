@@ -1,26 +1,214 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
+import { IProductService } from 'src/core/interfaces/productService.interface';
+import { IProduct, IProductWithCategory } from 'src/core/types/product.type';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto, PaginationHelper } from 'src/core/pagination/pagination.dto';
 
 @Injectable()
-export class ProductService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+export class ProductService implements IProductService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: CreateProductDto): Promise<IProduct> {
+    // Verifica se já existe produto com mesmo slug
+    const existingBySlug = await this.prismaService.product.findFirst({
+      where: { slug: data.slug, deletedAt: null },
+    });
+
+    if (existingBySlug) {
+      throw new ConflictException(`Produto com slug "${data.slug}" já existe`);
+    }
+
+    // Verifica se a categoria existe
+    const category = await this.prismaService.category.findFirst({
+      where: { id: data.categoryId, deletedAt: null },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Categoria com ID "${data.categoryId}" não encontrada`);
+    }
+
+    const product = await this.prismaService.product.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        categoryId: data.categoryId,
+        variations: data.variations ?? [],
+        imageUrl: data.imageUrl ?? null,
+        active: data.active ?? true,
+        featured: data.featured ?? false,
+        stock: data.stock ?? 0,
+      },
+    });
+
+    return {
+      ...product,
+      variations: product.variations as string[] | null,
+    } as IProduct;
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll(paginationDto: PaginationDto): Promise<{
+    data: IProductWithCategory[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { page = 1, limit = 10 } = paginationDto;
+    const skip = PaginationHelper.skip(page, limit);
+
+    const [data, total] = await Promise.all([
+      this.prismaService.product.findMany({
+        where: { deletedAt: null },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.product.count({
+        where: { deletedAt: null },
+      }),
+    ]);
+
+    const formattedData = data.map((product) => ({
+      ...product,
+      variations: product.variations as string[] | null,
+    })) as IProductWithCategory[];
+
+    return PaginationHelper.paginate(formattedData, total, page, limit);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string): Promise<IProductWithCategory> {
+    // Primeiro, incrementa as views
+    await this.prismaService.product.update({
+      where: { id },
+      data: { views: { increment: 1 } },
+    });
+
+    // Depois, busca o produto com os dados atualizados
+    const product = await this.prismaService.product.findFirst({
+      where: { id, deletedAt: null },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
+    }
+
+    return {
+      ...product,
+      variations: product.variations as string[] | null,
+    } as IProductWithCategory;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findByCategory(categoryId: string, paginationDto: PaginationDto): Promise<{
+    data: IProductWithCategory[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    // Verifica se a categoria existe
+    const category = await this.prismaService.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Categoria com ID "${categoryId}" não encontrada`);
+    }
+
+    const { page = 1, limit = 10 } = paginationDto;
+    const skip = PaginationHelper.skip(page, limit);
+
+    const [data, total] = await Promise.all([
+      this.prismaService.product.findMany({
+        where: { categoryId, deletedAt: null },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.product.count({
+        where: { categoryId, deletedAt: null },
+      }),
+    ]);
+
+    const formattedData = data.map((product) => ({
+      ...product,
+      variations: product.variations as string[] | null,
+    })) as IProductWithCategory[];
+
+    return PaginationHelper.paginate(formattedData, total, page, limit);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async findByName(name: string, paginationDto: PaginationDto): Promise<{
+    data: IProductWithCategory[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const { page = 1, limit = 10 } = paginationDto;
+    const skip = PaginationHelper.skip(page, limit);
+
+    const [data, total] = await Promise.all([
+      this.prismaService.product.findMany({
+        where: {
+          name: { contains: name, mode: 'insensitive' },
+          deletedAt: null,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.product.count({
+        where: {
+          name: { contains: name, mode: 'insensitive' },
+          deletedAt: null,
+        },
+      }),
+    ]);
+
+    const formattedData = data.map((product) => ({
+      ...product,
+      variations: product.variations as string[] | null,
+    })) as IProductWithCategory[];
+
+    return PaginationHelper.paginate(formattedData, total, page, limit);
   }
 }
