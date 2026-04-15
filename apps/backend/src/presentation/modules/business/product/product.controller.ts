@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Query, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, Query, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { PaginationDto } from 'src/core/pagination/pagination.dto';
 
@@ -31,7 +32,6 @@ export class ProductController {
   @ApiOperation({ summary: 'Buscar produtos por nome (com paginação)' })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso' })
   findByName(@Query() searchDto: SearchProductDto) {
-    // Se não tiver name, retorna todos
     if (!searchDto.name) {
       return this.productService.findAll(searchDto);
     }
@@ -40,7 +40,7 @@ export class ProductController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Buscar produto por ID (incrementa views)' })
-  @ApiParam({ name: 'id', description: 'UUID do produto', example: '2903b710-5b01-40e5-b32a-bdddb58c81f8' })
+  @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiResponse({ status: 200, description: 'Produto encontrado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   findOne(@Param('id') id: string) {
@@ -49,7 +49,7 @@ export class ProductController {
 
   @Get('category/:categoryId')
   @ApiOperation({ summary: 'Buscar produtos por categoria (com paginação)' })
-  @ApiParam({ name: 'categoryId', description: 'UUID da categoria', example: '37d01a5e-7ec4-45f9-b155-03a8c52c2f70' })
+  @ApiParam({ name: 'categoryId', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   findByCategory(
@@ -57,5 +57,50 @@ export class ProductController {
     @Query() paginationDto: PaginationDto,
   ) {
     return this.productService.findByCategory(categoryId, paginationDto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Atualizar produto' })
+  @ApiParam({ name: 'id', description: 'UUID do produto' })
+  @ApiResponse({ status: 200, description: 'Produto atualizado' })
+  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 409, description: 'Conflito de slug' })
+  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    return this.productService.update(id, updateProductDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Soft delete - esconder produto' })
+  @ApiParam({ name: 'id', description: 'UUID do produto' })
+  @ApiResponse({ status: 200, description: 'Produto deletado' })
+  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 400, description: 'Produto já está deletado' })
+  remove(@Param('id') id: string) {
+    return this.productService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restaurar produto deletado' })
+  @ApiParam({ name: 'id', description: 'UUID do produto' })
+  @ApiResponse({ status: 200, description: 'Produto restaurado' })
+  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 400, description: 'Produto não está deletado' })
+  restore(@Param('id') id: string) {
+    return this.productService.restore(id);
+  }
+
+  @Patch(':id/stock')
+  @ApiOperation({ summary: 'Atualizar estoque do produto' })
+  @ApiParam({ name: 'id', description: 'UUID do produto' })
+  @ApiQuery({ name: 'quantity', required: true, example: 10, description: 'Nova quantidade em estoque' })
+  @ApiResponse({ status: 200, description: 'Estoque atualizado' })
+  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 400, description: 'Quantidade inválida' })
+  updateStock(
+    @Param('id') id: string,
+    @Query('quantity') quantity: string,
+  ) {
+    const quantityNum = parseInt(quantity, 10);
+    return this.productService.updateStock(id, quantityNum);
   }
 }

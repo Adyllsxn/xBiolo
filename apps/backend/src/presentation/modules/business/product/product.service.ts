@@ -1,8 +1,9 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { IProductService } from 'src/core/interfaces/productService.interface';
 import { IProduct, IProductWithCategory } from 'src/core/types/product.type';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto, PaginationHelper } from 'src/core/pagination/pagination.dto';
 
 @Injectable()
@@ -210,5 +211,137 @@ export class ProductService implements IProductService {
     })) as IProductWithCategory[];
 
     return PaginationHelper.paginate(formattedData, total, page, limit);
+  }
+
+  async update(id: string, data: UpdateProductDto): Promise<IProduct> {
+    // Verifica se o produto existe
+    const existingProduct = await this.prismaService.product.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
+    }
+
+    // Verifica se o novo slug já existe em outro produto
+    if (data.slug) {
+      const slugExists = await this.prismaService.product.findFirst({
+        where: { slug: data.slug, id: { not: id }, deletedAt: null },
+      });
+
+      if (slugExists) {
+        throw new ConflictException(`Produto com slug "${data.slug}" já existe`);
+      }
+    }
+
+    // Verifica se a nova categoria existe
+    if (data.categoryId) {
+      const category = await this.prismaService.category.findFirst({
+        where: { id: data.categoryId, deletedAt: null },
+      });
+
+      if (!category) {
+        throw new NotFoundException(`Categoria com ID "${data.categoryId}" não encontrada`);
+      }
+    }
+
+    const product = await this.prismaService.product.update({
+      where: { id },
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        categoryId: data.categoryId,
+        variations: data.variations,
+        imageUrl: data.imageUrl,
+        active: data.active,
+        featured: data.featured,
+        stock: data.stock,
+      },
+    });
+
+    return {
+      ...product,
+      variations: product.variations as string[] | null,
+    } as IProduct;
+  }
+
+  async remove(id: string): Promise<{ message: string; product: IProduct }> {
+    const product = await this.prismaService.product.findFirst({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
+    }
+
+    if (product.deletedAt !== null) {
+      throw new BadRequestException(`Produto "${product.name}" já está deletado`);
+    }
+
+    const deletedProduct = await this.prismaService.product.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    return {
+      message: `Produto "${product.name}" foi deletado com sucesso`,
+      product: {
+        ...deletedProduct,
+        variations: deletedProduct.variations as string[] | null,
+      } as IProduct,
+    };
+  }
+
+  async restore(id: string): Promise<{ message: string; product: IProduct }> {
+    const product = await this.prismaService.product.findFirst({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
+    }
+
+    if (product.deletedAt === null) {
+      throw new BadRequestException(`Produto "${product.name}" não está deletado`);
+    }
+
+    const restoredProduct = await this.prismaService.product.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+
+    return {
+      message: `Produto "${product.name}" foi restaurado com sucesso`,
+      product: {
+        ...restoredProduct,
+        variations: restoredProduct.variations as string[] | null,
+      } as IProduct,
+    };
+  }
+
+  async updateStock(id: string, quantity: number): Promise<IProduct> {
+    const product = await this.prismaService.product.findFirst({
+      where: { id, deletedAt: null },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
+    }
+
+    if (quantity < 0) {
+      throw new BadRequestException(`Quantidade não pode ser negativa`);
+    }
+
+    const updatedProduct = await this.prismaService.product.update({
+      where: { id },
+      data: { stock: quantity },
+    });
+
+    return {
+      ...updatedProduct,
+      variations: updatedProduct.variations as string[] | null,
+    } as IProduct;
   }
 }
