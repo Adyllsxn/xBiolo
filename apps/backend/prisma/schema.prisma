@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 // ============================================
 // CATEGORIAS
 // ============================================
@@ -18,10 +17,55 @@ model Category {
   description String?
   active      Boolean  @default(true)
   order       Int      @default(0)
-  deletedAt   DateTime?  // ← ADICIONA ISSO
+  deletedAt   DateTime?
+  
+  products    Product[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   @@map("categories")
+}
+
+// ============================================
+// PRODUTOS
+// ============================================
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  price       Float    @default(0)
+  
+  // Relacionamento com categoria
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  // Variações (ex: ["P", "M", "G"] ou ["34", "36", "38"])
+  variations  Json?    @default("[]")
+  
+  // Imagem (simples por enquanto)
+  imageUrl    String?
+  
+  // Status
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  
+  // Estoque
+  stock       Int      @default(0)
+  
+  // Soft delete
+  deletedAt   DateTime?
+  
+  // Metadados
+  views       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([categoryId])
+  @@index([slug])
+  @@index([active])
+  @@index([deletedAt])
+  @@map("products")
 }

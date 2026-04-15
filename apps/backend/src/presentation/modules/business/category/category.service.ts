@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { ICategory } from 'src/core/types/category.type';
+import { ICategoryService } from 'src/core/interfaces/categoryService.interface';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService implements ICategoryService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<ICategory[]> {
@@ -95,7 +96,7 @@ export class CategoryService {
     });
   }
 
-  async remove(id: string): Promise<{ message: string; category: ICategory }> {
+  async remove(id: string): Promise<ICategory> {
     const category = await this.prismaService.category.findFirst({
       where: { id },
     });
@@ -108,18 +109,13 @@ export class CategoryService {
       throw new BadRequestException(`Categoria "${category.name}" já está deletada`);
     }
 
-    const deletedCategory = await this.prismaService.category.update({
+    return await this.prismaService.category.update({
       where: { id },
       data: { deletedAt: new Date() },
     });
-
-    return {
-      message: `Categoria "${category.name}" foi deletada com sucesso`,
-      category: deletedCategory,
-    };
   }
 
-  async restore(id: string): Promise<{ message: string; category: ICategory }> {
+  async restore(id: string): Promise<ICategory> {
     const category = await this.prismaService.category.findFirst({
       where: { id },
     });
@@ -132,14 +128,9 @@ export class CategoryService {
       throw new BadRequestException(`Categoria "${category.name}" não está deletada`);
     }
 
-    const restoredCategory = await this.prismaService.category.update({
+    return await this.prismaService.category.update({
       where: { id },
       data: { deletedAt: null },
     });
-
-    return {
-      message: `Categoria "${category.name}" foi restaurada com sucesso`,
-      category: restoredCategory,
-    };
   }
 }
