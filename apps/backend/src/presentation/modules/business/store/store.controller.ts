@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StoreService } from './store.service';
-import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
+@ApiTags('store')
 @Controller('store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
-  @Post()
-  create(@Body() createStoreDto: CreateStoreDto) {
-    return this.storeService.create(createStoreDto);
-  }
-
   @Get()
-  findAll() {
-    return this.storeService.findAll();
+  @ApiOperation({ summary: 'Buscar configurações da loja' })
+  @ApiResponse({ status: 200, description: 'Configurações encontradas' })
+  @ApiResponse({ status: 404, description: 'Configurações não encontradas' })
+  findOne() {
+    return this.storeService.findOne();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.storeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storeService.update(+id, updateStoreDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storeService.remove(+id);
+  @Patch()
+  @ApiOperation({ summary: 'Atualizar configurações da loja' })
+  @ApiResponse({ status: 200, description: 'Configurações atualizadas' })
+  @ApiResponse({ status: 404, description: 'Configurações não encontradas' })
+  @HttpCode(HttpStatus.OK)
+  update(@Body() updateStoreDto: UpdateStoreDto) {
+    return this.storeService.update(updateStoreDto);
   }
 }

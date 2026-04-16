@@ -3,6 +3,7 @@ generator client {
   output   = "../src/infrastructure/generated/prisma"
   moduleFormat = "cjs"
 }
+
 datasource db {
   provider = "postgresql"
 }
@@ -37,28 +38,18 @@ model Product {
   description String?
   price       Float    @default(0)
   
-  // Relacionamento com categoria
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
   
-  // Variações (ex: ["P", "M", "G"] ou ["34", "36", "38"])
   variations  Json?    @default("[]")
-  
-  // Imagem (simples por enquanto)
   imageUrl    String?
-  
-  // Status
   active      Boolean  @default(true)
   featured    Boolean  @default(false)
-  
-  // Estoque
   stock       Int      @default(0)
-  
-  // Soft delete
   deletedAt   DateTime?
-  
-  // Metadados
   views       Int      @default(0)
+  
+  orderItems  OrderItem[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -68,4 +59,65 @@ model Product {
   @@index([active])
   @@index([deletedAt])
   @@map("products")
+}
+
+// ============================================
+// STORE (CONFIGURAÇÕES DA LOJA)
+// ============================================
+model Store {
+  id           String   @id @default(uuid())
+  name         String   @default("Biolo")
+  whatsapp     String   @default("244935751955")
+  email        String?
+  address      String?
+  logo         String?
+  primaryColor String   @default("#E05A2A")
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("stores")
+}
+
+// ============================================
+// PEDIDOS
+// ============================================
+model Order {
+  id            String   @id @default(uuid())
+  clientName    String
+  clientAddress String
+  clientPhone   String?
+  paymentMethod String   // "pix", "card", "cash"
+  status        String   @default("pending") // pending, approved, delivered, cancelled
+  total         Float    @default(0)
+  
+  items         OrderItem[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("orders")
+}
+
+// ============================================
+// ITENS DO PEDIDO
+// ============================================
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  productId   String
+  productName String
+  quantity    Int
+  price       Float    // preço na hora da compra
+  variation   String?  // tamanho escolhido (P, M, G, etc)
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
 }

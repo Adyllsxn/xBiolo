@@ -1,10 +1,18 @@
-import { Injectable, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { IProductService } from 'src/core/interfaces/productService.interface';
 import { IProduct, IProductWithCategory } from 'src/core/types/product.type';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PaginationDto, PaginationHelper } from 'src/core/pagination/pagination.dto';
+import {
+  PaginationDto,
+  PaginationHelper,
+} from 'src/core/pagination/pagination.dto';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -26,7 +34,9 @@ export class ProductService implements IProductService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Categoria com ID "${data.categoryId}" não encontrada`);
+      throw new NotFoundException(
+        `Categoria com ID "${data.categoryId}" não encontrada`,
+      );
     }
 
     const product = await this.prismaService.product.create({
@@ -120,7 +130,10 @@ export class ProductService implements IProductService {
     } as IProductWithCategory;
   }
 
-  async findByCategory(categoryId: string, paginationDto: PaginationDto): Promise<{
+  async findByCategory(
+    categoryId: string,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: IProductWithCategory[];
     total: number;
     page: number;
@@ -133,7 +146,9 @@ export class ProductService implements IProductService {
     });
 
     if (!category) {
-      throw new NotFoundException(`Categoria com ID "${categoryId}" não encontrada`);
+      throw new NotFoundException(
+        `Categoria com ID "${categoryId}" não encontrada`,
+      );
     }
 
     const { page = 1, limit = 10 } = paginationDto;
@@ -168,7 +183,10 @@ export class ProductService implements IProductService {
     return PaginationHelper.paginate(formattedData, total, page, limit);
   }
 
-  async findByName(name: string, paginationDto: PaginationDto): Promise<{
+  async findByName(
+    name: string,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: IProductWithCategory[];
     total: number;
     page: number;
@@ -230,7 +248,9 @@ export class ProductService implements IProductService {
       });
 
       if (slugExists) {
-        throw new ConflictException(`Produto com slug "${data.slug}" já existe`);
+        throw new ConflictException(
+          `Produto com slug "${data.slug}" já existe`,
+        );
       }
     }
 
@@ -241,7 +261,9 @@ export class ProductService implements IProductService {
       });
 
       if (!category) {
-        throw new NotFoundException(`Categoria com ID "${data.categoryId}" não encontrada`);
+        throw new NotFoundException(
+          `Categoria com ID "${data.categoryId}" não encontrada`,
+        );
       }
     }
 
@@ -277,7 +299,9 @@ export class ProductService implements IProductService {
     }
 
     if (product.deletedAt !== null) {
-      throw new BadRequestException(`Produto "${product.name}" já está deletado`);
+      throw new BadRequestException(
+        `Produto "${product.name}" já está deletado`,
+      );
     }
 
     const deletedProduct = await this.prismaService.product.update({
@@ -304,7 +328,9 @@ export class ProductService implements IProductService {
     }
 
     if (product.deletedAt === null) {
-      throw new BadRequestException(`Produto "${product.name}" não está deletado`);
+      throw new BadRequestException(
+        `Produto "${product.name}" não está deletado`,
+      );
     }
 
     const restoredProduct = await this.prismaService.product.update({

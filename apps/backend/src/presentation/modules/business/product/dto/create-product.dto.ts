@@ -15,11 +15,17 @@ export class CreateProductDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'vestido-semba', description: 'Slug para URL amigável' })
+  @ApiProperty({
+    example: 'vestido-semba',
+    description: 'Slug para URL amigável',
+  })
   @IsString()
   slug: string;
 
-  @ApiPropertyOptional({ example: 'Vestido em algodão com estampa floral', description: 'Descrição do produto' })
+  @ApiPropertyOptional({
+    example: 'Vestido em algodão com estampa floral',
+    description: 'Descrição do produto',
+  })
   @IsOptional()
   @IsString()
   description?: string;
@@ -30,17 +36,26 @@ export class CreateProductDto {
   @Type(() => Number)
   price: number;
 
-  @ApiProperty({ example: '37d01a5e-7ec4-45f9-b155-03a8c52c2f70', description: 'ID da categoria' })
+  @ApiProperty({
+    example: '37d01a5e-7ec4-45f9-b155-03a8c52c2f70',
+    description: 'ID da categoria',
+  })
   @IsUUID()
   categoryId: string;
 
-  @ApiPropertyOptional({ example: ['P', 'M', 'G'], description: 'Variações (tamanhos, cores)' })
+  @ApiPropertyOptional({
+    example: ['P', 'M', 'G'],
+    description: 'Variações (tamanhos, cores)',
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   variations?: string[];
 
-  @ApiPropertyOptional({ example: 'vestido-semba.jpg', description: 'Nome da imagem' })
+  @ApiPropertyOptional({
+    example: 'vestido-semba.jpg',
+    description: 'Nome da imagem',
+  })
   @IsOptional()
   @IsString()
   imageUrl?: string;

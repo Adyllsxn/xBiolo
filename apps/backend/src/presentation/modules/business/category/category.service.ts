@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
 import { ICategory } from 'src/core/types/category.type';
 import { ICategoryService } from 'src/core/interfaces/categoryService.interface';
@@ -35,7 +40,9 @@ export class CategoryService implements ICategoryService {
     });
 
     if (existingByName) {
-      throw new ConflictException(`Categoria com nome "${data.name}" já existe`);
+      throw new ConflictException(
+        `Categoria com nome "${data.name}" já existe`,
+      );
     }
 
     // Verifica se já existe categoria com mesmo slug (não deletada)
@@ -44,7 +51,9 @@ export class CategoryService implements ICategoryService {
     });
 
     if (existingBySlug) {
-      throw new ConflictException(`Categoria com slug "${data.slug}" já existe`);
+      throw new ConflictException(
+        `Categoria com slug "${data.slug}" já existe`,
+      );
     }
 
     return await this.prismaService.category.create({
@@ -69,7 +78,9 @@ export class CategoryService implements ICategoryService {
       });
 
       if (existingByName) {
-        throw new ConflictException(`Categoria com nome "${data.name}" já existe`);
+        throw new ConflictException(
+          `Categoria com nome "${data.name}" já existe`,
+        );
       }
     }
 
@@ -80,7 +91,9 @@ export class CategoryService implements ICategoryService {
       });
 
       if (existingBySlug) {
-        throw new ConflictException(`Categoria com slug "${data.slug}" já existe`);
+        throw new ConflictException(
+          `Categoria com slug "${data.slug}" já existe`,
+        );
       }
     }
 
@@ -106,7 +119,9 @@ export class CategoryService implements ICategoryService {
     }
 
     if (category.deletedAt !== null) {
-      throw new BadRequestException(`Categoria "${category.name}" já está deletada`);
+      throw new BadRequestException(
+        `Categoria "${category.name}" já está deletada`,
+      );
     }
 
     return await this.prismaService.category.update({
@@ -125,7 +140,9 @@ export class CategoryService implements ICategoryService {
     }
 
     if (category.deletedAt === null) {
-      throw new BadRequestException(`Categoria "${category.name}" não está deletada`);
+      throw new BadRequestException(
+        `Categoria "${category.name}" não está deletada`,
+      );
     }
 
     return await this.prismaService.category.update({

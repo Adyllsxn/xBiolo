@@ -1,5 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Delete, Query, Param, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Delete,
+  Query,
+  Param,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -92,14 +109,16 @@ export class ProductController {
   @Patch(':id/stock')
   @ApiOperation({ summary: 'Atualizar estoque do produto' })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
-  @ApiQuery({ name: 'quantity', required: true, example: 10, description: 'Nova quantidade em estoque' })
+  @ApiQuery({
+    name: 'quantity',
+    required: true,
+    example: 10,
+    description: 'Nova quantidade em estoque',
+  })
   @ApiResponse({ status: 200, description: 'Estoque atualizado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Quantidade inválida' })
-  updateStock(
-    @Param('id') id: string,
-    @Query('quantity') quantity: string,
-  ) {
+  updateStock(@Param('id') id: string, @Query('quantity') quantity: string) {
     const quantityNum = parseInt(quantity, 10);
     return this.productService.updateStock(id, quantityNum);
   }

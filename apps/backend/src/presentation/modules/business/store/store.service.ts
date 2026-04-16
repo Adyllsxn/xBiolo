@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStoreDto } from './dto/create-store.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/infrastructure/prisma/prisma.service';
+import { IStoreService } from 'src/core/interfaces/storeService.interface';
+import { IStore } from 'src/core/types/store.type';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Injectable()
-export class StoreService {
-  create(createStoreDto: CreateStoreDto) {
-    return 'This action adds a new store';
+export class StoreService implements IStoreService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findOne(): Promise<IStore> {
+    const store = await this.prismaService.store.findFirst();
+
+    if (!store) {
+      throw new NotFoundException('Configurações da loja não encontradas');
+    }
+
+    return store;
   }
 
-  findAll() {
-    return `This action returns all store`;
-  }
+  async update(data: UpdateStoreDto): Promise<IStore> {
+    const store = await this.prismaService.store.findFirst();
 
-  findOne(id: number) {
-    return `This action returns a #${id} store`;
-  }
+    if (!store) {
+      throw new NotFoundException('Configurações da loja não encontradas');
+    }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
-    return `This action updates a #${id} store`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} store`;
+    return await this.prismaService.store.update({
+      where: { id: store.id },
+      data: {
+        name: data.name,
+        whatsapp: data.whatsapp,
+        email: data.email,
+        address: data.address,
+        primaryColor: data.primaryColor,
+      },
+    });
   }
 }

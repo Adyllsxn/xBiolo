@@ -12,25 +12,31 @@ export interface IProductService {
     limit: number;
     totalPages: number;
   }>;
-  
+
   findOne(id: string): Promise<IProductWithCategory>;
-  
-  findByCategory(categoryId: string, paginationDto: PaginationDto): Promise<{
+
+  findByCategory(
+    categoryId: string,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: IProductWithCategory[];
     total: number;
     page: number;
     limit: number;
     totalPages: number;
   }>;
-  
-  findByName(name: string, paginationDto: PaginationDto): Promise<{
+
+  findByName(
+    name: string,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: IProductWithCategory[];
     total: number;
     page: number;
     limit: number;
     totalPages: number;
   }>;
- 
+
   // Commands
   create(data: CreateProductDto): Promise<IProduct>;
   update(id: string, data: UpdateProductDto): Promise<IProduct>;

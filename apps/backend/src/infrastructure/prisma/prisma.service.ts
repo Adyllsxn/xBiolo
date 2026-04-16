@@ -19,9 +19,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       await this.$queryRaw`SELECT 1`;
       this.dbConnected = true;
       Logger.log('✅ Database connection established');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       this.dbConnected = false;
-      Logger.warn('⚠️ Database connection failed - API running without database');
+      Logger.warn(
+        '⚠️ Database connection failed - API running without database',
+      );
     }
   }
 

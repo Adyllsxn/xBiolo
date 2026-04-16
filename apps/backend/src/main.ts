@@ -42,6 +42,8 @@ Plataforma de comércio conversacional onde o cliente bota na sacolinha e fecha 
     .addTag('password', '🔑 Endpoints de gerenciamento de senha')
     .addTag('categories', '📁 Endpoints de categorias')
     .addTag('products', '🛍️ Endpoints de produtos')
+    .addTag('store', '🏪 Endpoints da loja')
+    .addTag('orders', '📦 Endpoints de pedidos')
     .addTag('system', '🏥 Endpoints de sistema e monitoramento')
     .build();
 

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PasswordService } from './password.service';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -25,7 +33,10 @@ export class PasswordController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePasswordDto: UpdatePasswordDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
     return this.passwordService.update(+id, updatePasswordDto);
   }
 

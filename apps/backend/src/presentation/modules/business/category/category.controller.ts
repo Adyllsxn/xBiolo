@@ -51,7 +51,10 @@ export class CategoryController {
   @ApiResponse({ status: 200, description: 'Categoria atualizada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @ApiResponse({ status: 409, description: 'Conflito de nome/slug' })
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
     return this.categoryService.update(id, updateCategoryDto);
   }
 

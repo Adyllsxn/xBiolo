@@ -10,6 +10,10 @@ export interface ICategoryService {
   // Commands
   create(data: CreateCategoryDto): Promise<ICategory>;
   update(id: string, data: UpdateCategoryDto): Promise<ICategory>;
-  remove(id: string): Promise<ICategory | { message: string; category: ICategory }>;
-  restore(id: string): Promise<ICategory | { message: string; category: ICategory }>;
+  remove(
+    id: string,
+  ): Promise<ICategory | { message: string; category: ICategory }>;
+  restore(
+    id: string,
+  ): Promise<ICategory | { message: string; category: ICategory }>;
 }
