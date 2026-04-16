@@ -9,6 +9,21 @@ datasource db {
 }
 
 // ============================================
+// ENUMS
+// ============================================
+enum OrderStatus {
+  pending
+  approved
+  delivered
+  cancelled
+}
+
+enum PaymentMethod {
+  card
+  cash
+}
+
+// ============================================
 // CATEGORIAS
 // ============================================
 model Category {
@@ -83,18 +98,18 @@ model Store {
 // PEDIDOS
 // ============================================
 model Order {
-  id            String   @id @default(uuid())
+  id            String        @id @default(uuid())
   clientName    String
   clientAddress String
   clientPhone   String?
-  paymentMethod String   // "pix", "card", "cash"
-  status        String   @default("pending") // pending, approved, delivered, cancelled
-  total         Float    @default(0)
+  paymentMethod PaymentMethod
+  status        OrderStatus   @default(pending)
+  total         Float         @default(0)
   
   items         OrderItem[]
   
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   
   @@map("orders")
 }
@@ -108,8 +123,8 @@ model OrderItem {
   productId   String
   productName String
   quantity    Int
-  price       Float    // preço na hora da compra
-  variation   String?  // tamanho escolhido (P, M, G, etc)
+  price       Float
+  variation   String?
   
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product     Product  @relation(fields: [productId], references: [id])
