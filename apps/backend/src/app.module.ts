@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { CategoryModule } from './presentation/modules/business/category/category.module';
 import { SystemModule } from './presentation/modules/system/system.module';
@@ -13,6 +14,18 @@ import { AuthModule } from './presentation/modules/identity/auth/auth.module';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'login',
+        ttl: 120000,
+        limit: 3,
+      },
+      {
+        name: 'default',
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     PrismaModule,
     CategoryModule,
     SystemModule,
