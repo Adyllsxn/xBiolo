@@ -9,6 +9,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,30 +17,23 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { PaginationDto } from 'src/core/pagination/pagination.dto';
-
-// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
-const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+import { JwtAuthGuard } from 'src/presentation/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/presentation/common/guards/roles.guard';
+import { AdminOnly } from 'src/presentation/common/decorators/admin-only.decorator';
+import { CurrentUser } from 'src/presentation/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from 'src/core/types/authenticated-user.type';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
-
-  @Post()
-  @ApiOperation({ summary: 'Criar novo produto' })
-  @ApiResponse({ status: 201, description: 'Produto criado com sucesso' })
-  @ApiResponse({ status: 409, description: 'Produto com este slug já existe' })
-  @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto, TEMP_ADMIN_ID);
-  }
 
   @Get()
   @ApiOperation({ summary: 'Listar todos os produtos (com paginação)' })
@@ -79,37 +73,69 @@ export class ProductController {
     return this.productService.findByCategory(categoryId, paginationDto);
   }
 
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Criar novo produto' })
+  @ApiResponse({ status: 201, description: 'Produto criado com sucesso' })
+  @ApiResponse({ status: 409, description: 'Produto com este slug já existe' })
+  @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
+  @HttpCode(HttpStatus.CREATED)
+  create(
+    @Body() createProductDto: CreateProductDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.productService.create(createProductDto, user.id);
+  }
+
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar produto' })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiResponse({ status: 200, description: 'Produto atualizado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 409, description: 'Conflito de slug' })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto, TEMP_ADMIN_ID);
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.productService.update(id, updateProductDto, user.id);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Soft delete - esconder produto' })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiResponse({ status: 200, description: 'Produto deletado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Produto já está deletado' })
-  remove(@Param('id') id: string) {
-    return this.productService.remove(id, TEMP_ADMIN_ID);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.productService.remove(id, user.id);
   }
 
   @Patch(':id/restore')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Restaurar produto deletado' })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiResponse({ status: 200, description: 'Produto restaurado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Produto não está deletado' })
-  restore(@Param('id') id: string) {
-    return this.productService.restore(id, TEMP_ADMIN_ID);
+  restore(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.productService.restore(id, user.id);
   }
 
   @Patch(':id/stock')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar estoque do produto' })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiQuery({
@@ -121,8 +147,12 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Estoque atualizado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Quantidade inválida' })
-  updateStock(@Param('id') id: string, @Query('quantity') quantity: string) {
+  updateStock(
+    @Param('id') id: string,
+    @Query('quantity') quantity: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
     const quantityNum = parseInt(quantity, 10);
-    return this.productService.updateStock(id, quantityNum, TEMP_ADMIN_ID);
+    return this.productService.updateStock(id, quantityNum, user.id);
   }
 }

@@ -9,6 +9,7 @@ import { OrderModule } from './presentation/modules/business/order/order.module'
 import { AccountModule } from './presentation/modules/identity/account/account.module';
 import { PermissionModule } from './presentation/modules/identity/permission/permission.module';
 import { PasswordModule } from './presentation/modules/identity/password/password.module';
+import { AuthModule } from './presentation/modules/identity/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PasswordModule } from './presentation/modules/identity/password/passwor
     AccountModule,
     PermissionModule,
     PasswordModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

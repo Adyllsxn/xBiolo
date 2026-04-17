@@ -13,8 +13,7 @@ import { UserRole } from '@prisma/generated/enums';
 export class PermissionService implements IPermissionService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // Adicionado async para corresponder à interface
-  async listRoles(): Promise<IRoleListResponse> {
+  listRoles(): IRoleListResponse {
     const roles = Object.values(UserRole);
 
     const description: Record<UserRole, string> = {
@@ -54,7 +53,6 @@ export class PermissionService implements IPermissionService {
 
   async updateUserRole(
     updateRoleDto: UpdateRoleDto,
-    updatedById: string,
   ): Promise<{ message: string; user: IUserRole }> {
     const { userId, role } = updateRoleDto;
 
@@ -82,7 +80,6 @@ export class PermissionService implements IPermissionService {
       where: { id: userId },
       data: {
         role,
-        // updatedById removido - campo não existe no schema
       },
       select: {
         id: true,

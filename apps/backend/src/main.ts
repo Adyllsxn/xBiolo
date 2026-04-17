@@ -2,11 +2,15 @@ import 'dotenv/config';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './presentation/common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cookie parser (para ler cookies)
+  app.use(cookieParser());
 
   // Global filter para tratamento de erros
   app.useGlobalFilters(new GlobalExceptionFilter());
@@ -21,7 +25,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
+    credentials: true, // importante para cookies
   });
 
   // Configuração do Swagger
@@ -37,7 +41,8 @@ Plataforma de comércio conversacional onde o cliente bota na sacolinha e fecha 
     `,
     )
     .setVersion('1.0')
-    /*.addTag('auth', '🔐 Endpoints de autenticação')*/
+    .addCookieAuth('jwt')
+    .addTag('auth', '🔐 Endpoints de autenticação')
     .addTag('account', '👤 Endpoints de gerenciamento de contas')
     .addTag('password', '🔑 Endpoints de gerenciamento de senha')
     .addTag('permission', '🎫 Endpoints de gerenciamento de permissões')

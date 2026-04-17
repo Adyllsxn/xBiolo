@@ -8,14 +8,23 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-
-// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
-const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+import { JwtAuthGuard } from 'src/presentation/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/presentation/common/guards/roles.guard';
+import { AdminOnly } from 'src/presentation/common/decorators/admin-only.decorator';
+import { CurrentUser } from 'src/presentation/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from 'src/core/types/authenticated-user.type';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -39,16 +48,25 @@ export class CategoryController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Criar nova categoria' })
   @ApiResponse({ status: 201, description: 'Categoria criada com sucesso' })
   @ApiResponse({ status: 409, description: 'Categoria já existe' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto, TEMP_ADMIN_ID);
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.categoryService.create(createCategoryDto, user.id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar categoria' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria atualizada' })
@@ -57,27 +75,34 @@ export class CategoryController {
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.categoryService.update(id, updateCategoryDto, TEMP_ADMIN_ID);
+    return this.categoryService.update(id, updateCategoryDto, user.id);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Soft delete' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria deletada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @ApiResponse({ status: 400, description: 'Categoria já está deletada' })
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(id, TEMP_ADMIN_ID);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.categoryService.remove(id, user.id);
   }
 
   @Patch(':id/restore')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Restaurar categoria' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria restaurada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @ApiResponse({ status: 400, description: 'Categoria não está deletada' })
-  restore(@Param('id') id: string) {
-    return this.categoryService.restore(id, TEMP_ADMIN_ID);
+  restore(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.categoryService.restore(id, user.id);
   }
 }

@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,15 +17,19 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderStatus } from '@prisma/generated/enums';
 import { PaginationDto } from '@core/pagination/pagination.dto';
-
-// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
-const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+import { JwtAuthGuard } from 'src/presentation/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/presentation/common/guards/roles.guard';
+import { AdminOnly } from 'src/presentation/common/decorators/admin-only.decorator';
+import { AdminOrEmployee } from 'src/presentation/common/decorators/admin-or-employee.decorator';
+import { CurrentUser } from 'src/presentation/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from 'src/core/types/authenticated-user.type';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -40,7 +45,10 @@ export class OrderController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar todos os pedidos com paginação (admin)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOrEmployee()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar todos os pedidos com paginação' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso' })
@@ -49,6 +57,9 @@ export class OrderController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOrEmployee()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Buscar pedido por ID' })
   @ApiParam({ name: 'id', description: 'UUID do pedido' })
   @ApiResponse({ status: 200, description: 'Pedido encontrado' })
@@ -58,6 +69,9 @@ export class OrderController {
   }
 
   @Patch(':id/status')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar status do pedido (admin)' })
   @ApiParam({ name: 'id', description: 'UUID do pedido' })
   @ApiResponse({ status: 200, description: 'Status atualizado' })
@@ -65,20 +79,24 @@ export class OrderController {
   updateStatus(
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.orderService.updateStatus(id, updateOrderDto, TEMP_ADMIN_ID);
+    return this.orderService.updateStatus(id, updateOrderDto, user.id);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @AdminOnly()
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Cancelar pedido' })
   @ApiParam({ name: 'id', description: 'UUID do pedido' })
   @ApiResponse({ status: 200, description: 'Pedido cancelado' })
   @ApiResponse({ status: 404, description: 'Pedido não encontrado' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string, @CurrentUser() user: AuthenticatedUser) {
     return this.orderService.updateStatus(
       id,
       { status: OrderStatus.cancelled },
-      TEMP_ADMIN_ID,
+      user.id,
     );
   }
 }

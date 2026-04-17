@@ -16,7 +16,6 @@ import {
 } from 'src/core/pagination/pagination.dto';
 import { UserRole } from '@prisma/generated/enums';
 
-// Tipo para os dados de update
 type UpdateUserData = {
   name?: string;
   email?: string;
@@ -135,10 +134,7 @@ export class AccountService implements IAccountService {
     return this.findOne(userId);
   }
 
-  async create(
-    createAccountDto: CreateAccountDto,
-    createdById: string,
-  ): Promise<IAccount> {
+  async create(createAccountDto: CreateAccountDto): Promise<IAccount> {
     const existingUser = await this.prismaService.user.findFirst({
       where: { email: createAccountDto.email, deletedAt: null },
     });
@@ -157,7 +153,6 @@ export class AccountService implements IAccountService {
         email: createAccountDto.email,
         password: hashedPassword,
         role: UserRole.employee,
-        // createdById e updatedById removidos - campos não existem no schema
       },
       select: {
         id: true,
@@ -178,7 +173,6 @@ export class AccountService implements IAccountService {
   async update(
     id: string,
     updateAccountDto: UpdateAccountDto,
-    updatedById: string,
   ): Promise<IAccount> {
     await this.findOne(id);
 
@@ -231,10 +225,7 @@ export class AccountService implements IAccountService {
     return user as IAccount;
   }
 
-  async remove(
-    id: string,
-    updatedById: string,
-  ): Promise<{ message: string; account: IAccount }> {
+  async remove(id: string): Promise<{ message: string; account: IAccount }> {
     const user = await this.prismaService.user.findFirst({
       where: { id },
     });
@@ -253,7 +244,6 @@ export class AccountService implements IAccountService {
       where: { id },
       data: {
         deletedAt: new Date(),
-        // updatedById removido - campo não existe no schema
       },
       select: {
         id: true,
@@ -274,10 +264,7 @@ export class AccountService implements IAccountService {
     };
   }
 
-  async restore(
-    id: string,
-    updatedById: string,
-  ): Promise<{ message: string; account: IAccount }> {
+  async restore(id: string): Promise<{ message: string; account: IAccount }> {
     const user = await this.prismaService.user.findFirst({
       where: { id },
     });
@@ -296,7 +283,6 @@ export class AccountService implements IAccountService {
       where: { id },
       data: {
         deletedAt: null,
-        // updatedById removido - campo não existe no schema
       },
       select: {
         id: true,

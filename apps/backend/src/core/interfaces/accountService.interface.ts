@@ -4,7 +4,6 @@ import { UpdateAccountDto } from 'src/presentation/modules/identity/account/dto/
 import { PaginationDto } from 'src/core/pagination/pagination.dto';
 
 export interface IAccountService {
-  // Queries
   findAll(paginationDto: PaginationDto): Promise<{
     data: IAccount[];
     total: number;
@@ -24,23 +23,8 @@ export interface IAccountService {
     totalPages: number;
   }>;
   findMe(userId: string): Promise<IAccount>;
-
-  // Commands
-  create(
-    createAccountDto: CreateAccountDto,
-    createdById: string,
-  ): Promise<IAccount>;
-  update(
-    id: string,
-    updateAccountDto: UpdateAccountDto,
-    updatedById: string,
-  ): Promise<IAccount>;
-  remove(
-    id: string,
-    updatedById: string,
-  ): Promise<{ message: string; account: IAccount }>;
-  restore(
-    id: string,
-    updatedById: string,
-  ): Promise<{ message: string; account: IAccount }>;
+  create(createAccountDto: CreateAccountDto): Promise<IAccount>;
+  update(id: string, updateAccountDto: UpdateAccountDto): Promise<IAccount>;
+  remove(id: string): Promise<{ message: string; account: IAccount }>;
+  restore(id: string): Promise<{ message: string; account: IAccount }>;
 }

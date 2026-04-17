@@ -18,7 +18,7 @@ export class StoreService implements IStoreService {
     return store;
   }
 
-  async update(data: UpdateStoreDto, userId: string): Promise<IStore> {
+  async update(data: UpdateStoreDto): Promise<IStore> {
     const store = await this.prismaService.store.findFirst();
 
     if (!store) {
@@ -33,7 +33,6 @@ export class StoreService implements IStoreService {
         email: data.email,
         address: data.address,
         primaryColor: data.primaryColor,
-        // updatedById removido - campo não existe no schema da Store
       },
     });
   }

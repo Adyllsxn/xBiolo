@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,10 +8,11 @@ import {
 import { PasswordService } from './password.service';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-
-// TODO: Adicionar guard quando tivermos autenticação
-// @UseGuards(JwtAuthGuard)
-const TEMP_USER_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+import { JwtAuthGuard } from 'src/presentation/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/presentation/common/guards/roles.guard';
+import { AdminOrEmployee } from 'src/presentation/common/decorators/admin-or-employee.decorator';
+import { CurrentUser } from 'src/presentation/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from 'src/core/types/authenticated-user.type';
 
 @ApiTags('password')
 @ApiBearerAuth()
@@ -20,13 +21,18 @@ export class PasswordController {
   constructor(private readonly passwordService: PasswordService) {}
 
   @Post('change')
+  @AdminOrEmployee()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Alterar senha do utilizador autenticado' })
   @ApiResponse({ status: 200, description: 'Senha alterada com sucesso' })
   @ApiResponse({ status: 401, description: 'Senha atual inválida' })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 404, description: 'Utilizador não encontrado' })
-  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    return this.passwordService.changePassword(changePasswordDto, TEMP_USER_ID);
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.passwordService.changePassword(changePasswordDto, user.id);
   }
 
   @Post('forgot')

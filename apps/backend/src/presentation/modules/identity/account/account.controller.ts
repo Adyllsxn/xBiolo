@@ -9,6 +9,8 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,26 +24,33 @@ import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { PaginationDto } from 'src/core/pagination/pagination.dto';
-
-// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
-const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+import { JwtAuthGuard } from 'src/presentation/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/presentation/common/guards/roles.guard';
+import { AdminOnly } from 'src/presentation/common/decorators/admin-only.decorator';
+import { AdminOrEmployee } from 'src/presentation/common/decorators/admin-or-employee.decorator';
+import { CurrentUser } from 'src/presentation/common/decorators/current-user.decorator';
+import type { AuthenticatedUser } from 'src/core/types/authenticated-user.type';
+import { UserRole } from '@prisma/generated/enums';
 
 @ApiTags('account')
 @ApiBearerAuth()
 @Controller('account')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post()
+  @AdminOnly()
   @ApiOperation({ summary: 'Criar novo utilizador (admin)' })
   @ApiResponse({ status: 201, description: 'Utilizador criado com sucesso' })
   @ApiResponse({ status: 409, description: 'Email já existe' })
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountService.create(createAccountDto, TEMP_ADMIN_ID);
+    return this.accountService.create(createAccountDto);
   }
 
   @Get()
+  @AdminOnly()
   @ApiOperation({ summary: 'Listar todos os utilizadores (admin)' })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso' })
   findAll(@Query() paginationDto: PaginationDto) {
@@ -49,6 +58,7 @@ export class AccountController {
   }
 
   @Get('search')
+  @AdminOnly()
   @ApiOperation({ summary: 'Buscar utilizador por nome' })
   @ApiQuery({ name: 'name', required: true, example: 'João' })
   @ApiResponse({ status: 200, description: 'Lista retornada com sucesso' })
@@ -60,13 +70,15 @@ export class AccountController {
   }
 
   @Get('me')
+  @AdminOrEmployee()
   @ApiOperation({ summary: 'Dados do próprio utilizador logado' })
   @ApiResponse({ status: 200, description: 'Dados retornados com sucesso' })
-  findMe() {
-    return this.accountService.findMe(TEMP_ADMIN_ID);
+  findMe(@CurrentUser() user: AuthenticatedUser) {
+    return this.accountService.findMe(user.id);
   }
 
   @Get(':id')
+  @AdminOnly()
   @ApiOperation({ summary: 'Buscar utilizador por ID (admin)' })
   @ApiParam({ name: 'id', description: 'UUID do utilizador' })
   @ApiResponse({ status: 200, description: 'Utilizador encontrado' })
@@ -76,32 +88,58 @@ export class AccountController {
   }
 
   @Patch(':id')
+  @AdminOrEmployee()
   @ApiOperation({ summary: 'Atualizar utilizador' })
   @ApiParam({ name: 'id', description: 'UUID do utilizador' })
   @ApiResponse({ status: 200, description: 'Utilizador atualizado' })
   @ApiResponse({ status: 404, description: 'Utilizador não encontrado' })
   @ApiResponse({ status: 409, description: 'Email já existe' })
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountService.update(id, updateAccountDto, TEMP_ADMIN_ID);
+  @ApiResponse({
+    status: 403,
+    description: 'Não tem permissão para editar este utilizador',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() updateAccountDto: UpdateAccountDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    // Se não for admin e não for o próprio, nega acesso
+
+    if (user.role !== UserRole.admin && user.id !== id) {
+      throw new ForbiddenException(
+        'Não tem permissão para editar este utilizador',
+      );
+    }
+
+    // Funcionário não pode mudar role
+
+    if (user.role !== UserRole.admin) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      delete (updateAccountDto as any).role;
+    }
+
+    return this.accountService.update(id, updateAccountDto);
   }
 
   @Delete(':id')
+  @AdminOnly()
   @ApiOperation({ summary: 'Soft delete utilizador (admin)' })
   @ApiParam({ name: 'id', description: 'UUID do utilizador' })
   @ApiResponse({ status: 200, description: 'Utilizador deletado' })
   @ApiResponse({ status: 404, description: 'Utilizador não encontrado' })
   @ApiResponse({ status: 400, description: 'Utilizador já está deletado' })
   remove(@Param('id') id: string) {
-    return this.accountService.remove(id, TEMP_ADMIN_ID);
+    return this.accountService.remove(id);
   }
 
   @Patch(':id/restore')
+  @AdminOnly()
   @ApiOperation({ summary: 'Restaurar utilizador deletado (admin)' })
   @ApiParam({ name: 'id', description: 'UUID do utilizador' })
   @ApiResponse({ status: 200, description: 'Utilizador restaurado' })
   @ApiResponse({ status: 404, description: 'Utilizador não encontrado' })
   @ApiResponse({ status: 400, description: 'Utilizador não está deletado' })
   restore(@Param('id') id: string) {
-    return this.accountService.restore(id, TEMP_ADMIN_ID);
+    return this.accountService.restore(id);
   }
 }
