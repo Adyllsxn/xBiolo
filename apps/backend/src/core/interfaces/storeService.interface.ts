@@ -5,5 +5,5 @@ export interface IStoreService {
   // Queries
   findOne(): Promise<IStore>;
   // Commands
-  update(data: UpdateStoreDto): Promise<IStore>;
+  update(data: UpdateStoreDto, userId: string): Promise<IStore>;
 }

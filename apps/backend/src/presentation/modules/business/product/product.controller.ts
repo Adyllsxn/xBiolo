@@ -23,6 +23,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 import { PaginationDto } from 'src/core/pagination/pagination.dto';
 
+// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
+const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+
 @ApiTags('products')
 @Controller('products')
 export class ProductController {
@@ -35,7 +38,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+    return this.productService.create(createProductDto, TEMP_ADMIN_ID);
   }
 
   @Get()
@@ -83,7 +86,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 409, description: 'Conflito de slug' })
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(id, updateProductDto);
+    return this.productService.update(id, updateProductDto, TEMP_ADMIN_ID);
   }
 
   @Delete(':id')
@@ -93,7 +96,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Produto já está deletado' })
   remove(@Param('id') id: string) {
-    return this.productService.remove(id);
+    return this.productService.remove(id, TEMP_ADMIN_ID);
   }
 
   @Patch(':id/restore')
@@ -103,7 +106,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 400, description: 'Produto não está deletado' })
   restore(@Param('id') id: string) {
-    return this.productService.restore(id);
+    return this.productService.restore(id, TEMP_ADMIN_ID);
   }
 
   @Patch(':id/stock')
@@ -120,6 +123,6 @@ export class ProductController {
   @ApiResponse({ status: 400, description: 'Quantidade inválida' })
   updateStock(@Param('id') id: string, @Query('quantity') quantity: string) {
     const quantityNum = parseInt(quantity, 10);
-    return this.productService.updateStock(id, quantityNum);
+    return this.productService.updateStock(id, quantityNum, TEMP_ADMIN_ID);
   }
 }

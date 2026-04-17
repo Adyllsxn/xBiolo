@@ -23,6 +23,37 @@ enum PaymentMethod {
   cash
 }
 
+enum UserRole {
+  admin
+  employee
+}
+
+// ============================================
+// USERS (IDENTITY)
+// ============================================
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  password    String
+  role        UserRole  @default(employee)
+  active      Boolean   @default(true)
+  deletedAt   DateTime?
+  lastLogin   DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relações one-to-many
+  createdCategories Category[] @relation("CategoryCreator")
+  updatedCategories Category[] @relation("CategoryUpdater")
+  createdProducts   Product[]   @relation("ProductCreator")
+  updatedProducts   Product[]   @relation("ProductUpdater")
+  updatedOrders     Order[]     @relation("OrderUpdater")
+  
+  @@map("users")
+}
+
 // ============================================
 // CATEGORIAS
 // ============================================
@@ -37,9 +68,16 @@ model Category {
   
   products    Product[]
   
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("CategoryCreator", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("CategoryUpdater", fields: [updatedById], references: [id])
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
+  @@index([createdById])
+  @@index([updatedById])
   @@map("categories")
 }
 
@@ -66,6 +104,11 @@ model Product {
   
   orderItems  OrderItem[]
   
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("ProductCreator", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("ProductUpdater", fields: [updatedById], references: [id])
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
@@ -73,6 +116,8 @@ model Product {
   @@index([slug])
   @@index([active])
   @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
   @@map("products")
 }
 
@@ -108,9 +153,13 @@ model Order {
   
   items         OrderItem[]
   
+  updatedById   String?
+  updatedBy     User?         @relation("OrderUpdater", fields: [updatedById], references: [id])
+  
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   
+  @@index([updatedById])
   @@map("orders")
 }
 

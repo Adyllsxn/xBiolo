@@ -8,4 +8,6 @@ export type ICategory = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  createdById?: string | null;
+  updatedById?: string | null;
 };

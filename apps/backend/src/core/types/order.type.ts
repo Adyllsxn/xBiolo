@@ -23,4 +23,5 @@ export type IOrder = {
   items: IOrderItem[];
   createdAt: Date;
   updatedAt: Date;
+  updatedById?: string | null;
 };

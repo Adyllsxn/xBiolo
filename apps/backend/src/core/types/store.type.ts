@@ -8,4 +8,5 @@ export type IStore = {
   primaryColor: string;
   createdAt: Date;
   updatedAt: Date;
+  updatedById?: string | null;
 };

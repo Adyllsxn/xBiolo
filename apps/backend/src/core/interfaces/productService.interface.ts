@@ -38,9 +38,15 @@ export interface IProductService {
   }>;
 
   // Commands
-  create(data: CreateProductDto): Promise<IProduct>;
-  update(id: string, data: UpdateProductDto): Promise<IProduct>;
-  remove(id: string): Promise<{ message: string; product: IProduct }>;
-  restore(id: string): Promise<{ message: string; product: IProduct }>;
-  updateStock(id: string, quantity: number): Promise<IProduct>;
+  create(data: CreateProductDto, userId: string): Promise<IProduct>;
+  update(id: string, data: UpdateProductDto, userId: string): Promise<IProduct>;
+  remove(
+    id: string,
+    userId: string,
+  ): Promise<{ message: string; product: IProduct }>;
+  restore(
+    id: string,
+    userId: string,
+  ): Promise<{ message: string; product: IProduct }>;
+  updateStock(id: string, quantity: number, userId: string): Promise<IProduct>;
 }

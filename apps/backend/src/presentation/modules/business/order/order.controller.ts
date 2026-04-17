@@ -23,6 +23,9 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderStatus } from '@prisma/generated/enums';
 import { PaginationDto } from '@core/pagination/pagination.dto';
 
+// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
+const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+
 @ApiTags('orders')
 @Controller('orders')
 export class OrderController {
@@ -63,7 +66,7 @@ export class OrderController {
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
   ) {
-    return this.orderService.updateStatus(id, updateOrderDto);
+    return this.orderService.updateStatus(id, updateOrderDto, TEMP_ADMIN_ID);
   }
 
   @Delete(':id')
@@ -72,8 +75,10 @@ export class OrderController {
   @ApiResponse({ status: 200, description: 'Pedido cancelado' })
   @ApiResponse({ status: 404, description: 'Pedido não encontrado' })
   remove(@Param('id') id: string) {
-    return this.orderService.updateStatus(id, {
-      status: OrderStatus.cancelled,
-    });
+    return this.orderService.updateStatus(
+      id,
+      { status: OrderStatus.cancelled },
+      TEMP_ADMIN_ID,
+    );
   }
 }

@@ -24,3 +24,11 @@ export const PaymentMethod = {
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const UserRole = {
+  admin: 'admin',
+  employee: 'employee'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]

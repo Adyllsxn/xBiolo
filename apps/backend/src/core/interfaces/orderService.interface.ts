@@ -13,5 +13,9 @@ export interface IOrderService {
     totalPages: number;
   }>;
   findOne(id: string): Promise<IOrder>;
-  updateStatus(id: string, updateOrderDto: UpdateOrderDto): Promise<IOrder>;
+  updateStatus(
+    id: string,
+    updateOrderDto: UpdateOrderDto,
+    userId: string,
+  ): Promise<IOrder>;
 }

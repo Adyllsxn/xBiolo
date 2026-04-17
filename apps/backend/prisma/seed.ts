@@ -1,5 +1,6 @@
 import { PrismaClient } from '../src/infrastructure/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import * as bcrypt from 'bcrypt';
 import 'dotenv/config';
 
 const adapter = new PrismaPg({
@@ -12,6 +13,31 @@ const prisma = new PrismaClient({
 
 async function main() {
   console.log('🌱 Seeding database...');
+
+  // ============================================
+  // USER ADMIN (primeiro registo)
+  // ============================================
+  const existingAdmin = await prisma.user.findFirst({
+    where: { role: 'admin' },
+  });
+
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    await prisma.user.create({
+      data: {
+        name: 'Administrador',
+        email: 'admin@biolo.ao',
+        password: hashedPassword,
+        role: 'admin',
+        active: true,
+      },
+    });
+    console.log('✅ Usuário Admin criado com sucesso');
+    console.log('   📧 Email: admin@biolo.ao');
+    console.log('   🔑 Senha: admin123');
+  } else {
+    console.log('⚠️ Usuário Admin já existe');
+  }
 
   // ============================================
   // STORE (só insere se não existir)

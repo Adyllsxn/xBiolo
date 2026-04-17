@@ -14,6 +14,9 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
+// TODO: Pegar userId do usuário logado (quando tivermos autenticação)
+const TEMP_ADMIN_ID = '42f4ab74-95e4-4748-b409-6b8610a8d182';
+
 @ApiTags('categories')
 @Controller('categories')
 export class CategoryController {
@@ -42,11 +45,11 @@ export class CategoryController {
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+    return this.categoryService.create(createCategoryDto, TEMP_ADMIN_ID);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Atualizar categoria (só envia o que quer mudar)' })
+  @ApiOperation({ summary: 'Atualizar categoria' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria atualizada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
@@ -55,26 +58,26 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoryService.update(id, updateCategoryDto);
+    return this.categoryService.update(id, updateCategoryDto, TEMP_ADMIN_ID);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft delete - esconder categoria' })
+  @ApiOperation({ summary: 'Soft delete' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria deletada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @ApiResponse({ status: 400, description: 'Categoria já está deletada' })
   remove(@Param('id') id: string) {
-    return this.categoryService.remove(id);
+    return this.categoryService.remove(id, TEMP_ADMIN_ID);
   }
 
   @Patch(':id/restore')
-  @ApiOperation({ summary: 'Restaurar categoria deletada' })
+  @ApiOperation({ summary: 'Restaurar categoria' })
   @ApiParam({ name: 'id', description: 'UUID da categoria' })
   @ApiResponse({ status: 200, description: 'Categoria restaurada' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @ApiResponse({ status: 400, description: 'Categoria não está deletada' })
   restore(@Param('id') id: string) {
-    return this.categoryService.restore(id);
+    return this.categoryService.restore(id, TEMP_ADMIN_ID);
   }
 }

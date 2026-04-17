@@ -18,7 +18,7 @@ import {
 export class ProductService implements IProductService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: CreateProductDto): Promise<IProduct> {
+  async create(data: CreateProductDto, userId: string): Promise<IProduct> {
     // Verifica se já existe produto com mesmo slug
     const existingBySlug = await this.prismaService.product.findFirst({
       where: { slug: data.slug, deletedAt: null },
@@ -51,6 +51,8 @@ export class ProductService implements IProductService {
         active: data.active ?? true,
         featured: data.featured ?? false,
         stock: data.stock ?? 0,
+        createdById: userId,
+        updatedById: userId,
       },
     });
 
@@ -231,7 +233,11 @@ export class ProductService implements IProductService {
     return PaginationHelper.paginate(formattedData, total, page, limit);
   }
 
-  async update(id: string, data: UpdateProductDto): Promise<IProduct> {
+  async update(
+    id: string,
+    data: UpdateProductDto,
+    userId: string,
+  ): Promise<IProduct> {
     // Verifica se o produto existe
     const existingProduct = await this.prismaService.product.findFirst({
       where: { id, deletedAt: null },
@@ -280,6 +286,7 @@ export class ProductService implements IProductService {
         active: data.active,
         featured: data.featured,
         stock: data.stock,
+        updatedById: userId,
       },
     });
 
@@ -289,7 +296,10 @@ export class ProductService implements IProductService {
     } as IProduct;
   }
 
-  async remove(id: string): Promise<{ message: string; product: IProduct }> {
+  async remove(
+    id: string,
+    userId: string,
+  ): Promise<{ message: string; product: IProduct }> {
     const product = await this.prismaService.product.findFirst({
       where: { id },
     });
@@ -306,7 +316,10 @@ export class ProductService implements IProductService {
 
     const deletedProduct = await this.prismaService.product.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        updatedById: userId,
+      },
     });
 
     return {
@@ -318,7 +331,10 @@ export class ProductService implements IProductService {
     };
   }
 
-  async restore(id: string): Promise<{ message: string; product: IProduct }> {
+  async restore(
+    id: string,
+    userId: string,
+  ): Promise<{ message: string; product: IProduct }> {
     const product = await this.prismaService.product.findFirst({
       where: { id },
     });
@@ -335,7 +351,10 @@ export class ProductService implements IProductService {
 
     const restoredProduct = await this.prismaService.product.update({
       where: { id },
-      data: { deletedAt: null },
+      data: {
+        deletedAt: null,
+        updatedById: userId,
+      },
     });
 
     return {
@@ -347,7 +366,11 @@ export class ProductService implements IProductService {
     };
   }
 
-  async updateStock(id: string, quantity: number): Promise<IProduct> {
+  async updateStock(
+    id: string,
+    quantity: number,
+    userId: string,
+  ): Promise<IProduct> {
     const product = await this.prismaService.product.findFirst({
       where: { id, deletedAt: null },
     });
@@ -362,7 +385,10 @@ export class ProductService implements IProductService {
 
     const updatedProduct = await this.prismaService.product.update({
       where: { id },
-      data: { stock: quantity },
+      data: {
+        stock: quantity,
+        updatedById: userId,
+      },
     });
 
     return {

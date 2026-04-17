@@ -33,8 +33,8 @@ export class CategoryService implements ICategoryService {
     return category;
   }
 
-  async create(data: CreateCategoryDto): Promise<ICategory> {
-    // Verifica se já existe categoria com mesmo nome (não deletada)
+  async create(data: CreateCategoryDto, userId: string): Promise<ICategory> {
+    // Verifica se já existe categoria com mesmo nome
     const existingByName = await this.prismaService.category.findFirst({
       where: { name: data.name, deletedAt: null },
     });
@@ -45,7 +45,7 @@ export class CategoryService implements ICategoryService {
       );
     }
 
-    // Verifica se já existe categoria com mesmo slug (não deletada)
+    // Verifica se já existe categoria com mesmo slug
     const existingBySlug = await this.prismaService.category.findFirst({
       where: { slug: data.slug, deletedAt: null },
     });
@@ -63,15 +63,19 @@ export class CategoryService implements ICategoryService {
         description: data.description,
         order: data.order ?? 0,
         active: data.active ?? true,
+        createdById: userId,
+        updatedById: userId,
       },
     });
   }
 
-  async update(id: string, data: UpdateCategoryDto): Promise<ICategory> {
-    // Verifica se a categoria existe
+  async update(
+    id: string,
+    data: UpdateCategoryDto,
+    userId: string,
+  ): Promise<ICategory> {
     await this.findOne(id);
 
-    // Verifica se novo nome já existe em outra categoria (não deletada)
     if (data.name) {
       const existingByName = await this.prismaService.category.findFirst({
         where: { name: data.name, id: { not: id }, deletedAt: null },
@@ -84,7 +88,6 @@ export class CategoryService implements ICategoryService {
       }
     }
 
-    // Verifica se novo slug já existe em outra categoria (não deletada)
     if (data.slug) {
       const existingBySlug = await this.prismaService.category.findFirst({
         where: { slug: data.slug, id: { not: id }, deletedAt: null },
@@ -105,11 +108,12 @@ export class CategoryService implements ICategoryService {
         description: data.description,
         order: data.order,
         active: data.active,
+        updatedById: userId,
       },
     });
   }
 
-  async remove(id: string): Promise<ICategory> {
+  async remove(id: string, userId: string): Promise<ICategory> {
     const category = await this.prismaService.category.findFirst({
       where: { id },
     });
@@ -126,11 +130,14 @@ export class CategoryService implements ICategoryService {
 
     return await this.prismaService.category.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        updatedById: userId,
+      },
     });
   }
 
-  async restore(id: string): Promise<ICategory> {
+  async restore(id: string, userId: string): Promise<ICategory> {
     const category = await this.prismaService.category.findFirst({
       where: { id },
     });
@@ -147,7 +154,10 @@ export class CategoryService implements ICategoryService {
 
     return await this.prismaService.category.update({
       where: { id },
-      data: { deletedAt: null },
+      data: {
+        deletedAt: null,
+        updatedById: userId,
+      },
     });
   }
 }

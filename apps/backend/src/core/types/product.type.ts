@@ -5,7 +5,7 @@ export type IProduct = {
   description: string | null;
   price: number;
   categoryId: string;
-  variations: string[] | null; // ["P", "M", "G"] ou []
+  variations: string[] | null;
   imageUrl: string | null;
   active: boolean;
   featured: boolean;
@@ -14,9 +14,10 @@ export type IProduct = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  createdById?: string | null;
+  updatedById?: string | null;
 };
 
-// Tipo para dados adicionais (com categoria incluída)
 export type IProductWithCategory = IProduct & {
   category: {
     id: string;

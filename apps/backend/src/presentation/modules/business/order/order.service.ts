@@ -104,6 +104,7 @@ export class OrderService implements IOrderService {
   async updateStatus(
     id: string,
     updateOrderDto: UpdateOrderDto,
+    userId: string,
   ): Promise<IOrder> {
     await this.findOne(id);
 
@@ -111,6 +112,7 @@ export class OrderService implements IOrderService {
       where: { id },
       data: {
         status: updateOrderDto.status,
+        updatedById: userId,
       },
       include: {
         items: true,

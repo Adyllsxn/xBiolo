@@ -8,12 +8,12 @@ export interface ICategoryService {
   findOne(id: string): Promise<ICategory>;
 
   // Commands
-  create(data: CreateCategoryDto): Promise<ICategory>;
-  update(id: string, data: UpdateCategoryDto): Promise<ICategory>;
-  remove(
+  create(data: CreateCategoryDto, userId: string): Promise<ICategory>;
+  update(
     id: string,
-  ): Promise<ICategory | { message: string; category: ICategory }>;
-  restore(
-    id: string,
-  ): Promise<ICategory | { message: string; category: ICategory }>;
+    data: UpdateCategoryDto,
+    userId: string,
+  ): Promise<ICategory>;
+  remove(id: string, userId: string): Promise<ICategory>;
+  restore(id: string, userId: string): Promise<ICategory>;
 }
