@@ -6,6 +6,9 @@ import { CommonModule } from './presentation/common/common.module';
 import { ProductModule } from './presentation/modules/business/product/product.module';
 import { StoreModule } from './presentation/modules/business/store/store.module';
 import { OrderModule } from './presentation/modules/business/order/order.module';
+import { AccountModule } from './presentation/modules/identity/account/account.module';
+import { PermissionModule } from './presentation/modules/identity/permission/permission.module';
+import { PasswordModule } from './presentation/modules/identity/password/password.module';
 
 @Module({
   imports: [
@@ -16,6 +19,9 @@ import { OrderModule } from './presentation/modules/business/order/order.module'
     ProductModule,
     StoreModule,
     OrderModule,
+    AccountModule,
+    PermissionModule,
+    PasswordModule,
   ],
 })
 export class AppModule {}

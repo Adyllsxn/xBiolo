@@ -33,7 +33,7 @@ export class StoreService implements IStoreService {
         email: data.email,
         address: data.address,
         primaryColor: data.primaryColor,
-        updatedById: userId,
+        // updatedById removido - campo não existe no schema da Store
       },
     });
   }
