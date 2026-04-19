@@ -1,24 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   Menu, 
   X, 
   Search, 
-  Heart, 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SITE_CONFIG, NAVIGATION_LINKS, HEADER_TOP_BAR, HEADER_SEARCH, HEADER_MOBILE } from '@/lib/constants';
+import { SITE_CONFIG, NAVIGATION_LINKS, HEADER_TOP_BAR, HEADER_SEARCH } from '@/lib/constants';
+import { useCart } from '@/contexts/CartContext';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { totalItems } = useCart();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
-      {/* Top bar - Ofertas e informações */}
+      {/* Top bar */}
       <div className="bg-orange-600 text-white text-center py-2 text-sm">
         <div className="container mx-auto px-4">
           {HEADER_TOP_BAR.message}
@@ -57,18 +64,15 @@ export function Header() {
               <Search className="h-5 w-5" />
             </button>
 
-            {/* Favoritos */}
-            <Link href="/favoritos" className="hidden md:flex p-2 text-gray-600 hover:text-orange-600">
-              <Heart className="h-5 w-5" />
-            </Link>
-
             {/* Sacolinha */}
             <Link href="/sacolinha">
               <Button variant="ghost" size="icon" className="relative hover:bg-orange-50">
                 <ShoppingBag className="h-5 w-5 text-gray-600" />
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] font-bold text-white">
-                  0
-                </span>
+                {mounted && totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] font-bold text-white">
+                    {totalItems}
+                  </span>
+                )}
               </Button>
             </Link>
 
@@ -116,15 +120,6 @@ export function Header() {
       {isMenuOpen && (
         <div className="md:hidden border-t bg-white p-4 shadow-lg">
           <nav className="flex flex-col gap-3">
-            <Link
-              href="/favoritos"
-              className="flex items-center gap-2 py-2 text-sm font-medium hover:text-orange-600"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Heart className="h-4 w-4" />
-              {HEADER_MOBILE.favorites}
-            </Link>
-            <div className="border-t my-2"></div>
             {NAVIGATION_LINKS.map((link) => (
               <Link
                 key={link.href}
