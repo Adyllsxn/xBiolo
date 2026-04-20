@@ -1,5 +1,5 @@
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
-import { FaWhatsapp, FaInstagram, FaFacebook, FaTiktok } from 'react-icons/fa';
+import { FaWhatsapp, FaInstagram, FaFacebook } from 'react-icons/fa';
 
 export const CONTACT_INFO = [
   {
@@ -26,15 +26,13 @@ export const CONTACT_INFO = [
 ];
 
 export const SOCIAL_LINKS = [
-  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244923456789', color: '#25D366' },
-  { name: 'Instagram', icon: FaInstagram, href: 'https://instagram.com/biolo', color: '#E4405F' },
-  { name: 'Facebook', icon: FaFacebook, href: 'https://facebook.com/biolo', color: '#1877F2' },
-  { name: 'TikTok', icon: FaTiktok, href: 'https://tiktok.com/@biolo', color: '#000000' }
+  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244923456789' },
+  { name: 'Instagram', icon: FaInstagram, href: 'https://instagram.com/biolo' },
+  { name: 'Facebook', icon: FaFacebook, href: 'https://facebook.com/biolo' }
 ];
 
 export const FAQ_PREVIEW = [
   { question: 'Como faço para comprar?', link: '/faq' },
-  { question: 'Quais as formas de pagamento?', link: '/formas-de-pagamento' },
 ];
 
 export const CONTACT_PAGE = {

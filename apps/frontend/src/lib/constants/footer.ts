@@ -3,7 +3,6 @@ import { FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
 
 export const FOOTER_SERVICES = [
   { name: 'Como comprar', href: '/como-comprar' },
-  { name: 'Formas de pagamento', href: '/formas-de-pagamento' },
   { name: 'Perguntas frequentes', href: '/faq' },
 ];
 

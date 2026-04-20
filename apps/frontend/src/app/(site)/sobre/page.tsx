@@ -1,5 +1,5 @@
-import AboutPage from './_components/AboutPage';
+import About from './_components/About';
 
 export default function SobrePage() {
-  return <AboutPage />;
+  return <About />;
 }

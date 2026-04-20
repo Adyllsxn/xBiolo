@@ -6,7 +6,7 @@ export default function ContactInfo() {
   return (
     <div className="space-y-4">
       {CONTACT_INFO.map((item, index) => (
-        <div key={index} className="flex items-start gap-5 p-5 bg-white border rounded-xl hover:shadow-md transition-shadow">
+        <div key={index} className="flex items-start gap-5 p-5 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
           <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
             <item.icon className="h-6 w-6 text-orange-500" />
           </div>

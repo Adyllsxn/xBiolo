@@ -7,7 +7,7 @@ import { FAQ_PREVIEW } from '../_constants/contact';
 export default function FaqPreview() {
   return (
     <div className="bg-orange-50 rounded-xl p-6">
-      <h3 className="font-semibold text-gray-800 mb-3">Dúvidas frequentes</h3>
+      <h3 className="font-semibold text-gray-800 mb-2">Dúvidas frequentes</h3>
       <p className="text-sm text-gray-600 mb-4">Respostas rápidas para as perguntas mais comuns</p>
       <ul className="space-y-3">
         {FAQ_PREVIEW.map((item, index) => (

@@ -3,6 +3,9 @@ export const faqData = {
   titlePrefix: 'Perguntas',
   titleHighlight: 'frequentes',
   description: 'Tire suas dúvidas sobre compras, pagamentos e entregas no Biolo.',
+  ctaText: 'Ainda tem dúvidas?',
+  ctaLinkText: 'Entre em contacto connosco',
+  ctaLink: '/contacto',
   faqs: [
     {
       question: 'Como faço para comprar?',

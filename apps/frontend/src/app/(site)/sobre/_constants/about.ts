@@ -1,49 +1,54 @@
-import { FiShoppingBag, FiHeart, FiUsers, FiTruck, FiAward, FiShield, FiZap, FiGlobe } from 'react-icons/fi';
+import { FiHeart, FiTarget, FiEye, FiShoppingBag, FiUsers, FiTruck } from 'react-icons/fi';
 
-export const ABOUT_STATS = [
-  { value: '2024', label: 'Fundação', icon: FiAward },
-  { value: '+100', label: 'Clientes', icon: FiUsers },
-  { value: '+500', label: 'Produtos vendidos', icon: FiShoppingBag },
-  { value: '100%', label: 'Satisfação', icon: FiHeart }
-];
-
-export const ABOUT_VALUES = [
-  {
-    icon: FiShoppingBag,
-    title: 'Simplicidade',
-    description: 'Comprar deve ser fácil, sem complicações.'
+export const ABOUT_PAGE = {
+  header: {
+    badge: 'Sobre nós',
+    titlePrefix: 'Conheça a',
+    titleHighlight: 'Biolo',
+    description: 'A plataforma que conecta pequenos negócios angolanos a clientes de forma simples e eficiente'
   },
-  {
+  story: {
     icon: FiHeart,
-    title: 'Atendimento',
-    description: 'O cliente é nossa prioridade.'
+    badge: 'Nossa história',
+    titlePrefix: 'Como tudo',
+    titleHighlight: 'começou',
+    paragraphs: [
+      'O Biolo nasceu da necessidade de ajudar pequenos negócios angolanos a terem presença digital. Vimos que muitos lojistas tinham dificuldade em mostrar seus produtos de forma profissional e alcançar mais clientes.',
+      'Foi assim que criamos o Biolo: uma plataforma simples, sem complicação, onde o cliente escolhe os produtos, bota na sacolinha e o pedido vai direto para o WhatsApp do lojista.'
+    ]
   },
-  {
-    icon: FiUsers,
-    title: 'Comunidade',
-    description: 'Apoiamos pequenos negócios em Angola.'
+  mission: {
+    icon: FiTarget,
+    titlePrefix: 'Nossa',
+    titleHighlight: 'missão',
+    description: 'Democratizar o acesso ao comércio digital em Angola, oferecendo uma plataforma simples, acessível e eficiente para pequenos negócios.'
   },
-  {
-    icon: FiTruck,
-    title: 'Agilidade',
-    description: 'Entregamos rápido em toda Luanda.'
+  vision: {
+    icon: FiEye,
+    titlePrefix: 'Nossa',
+    titleHighlight: 'visão',
+    description: 'Ser a principal plataforma de catálogo digital para pequenos negócios em Angola, conectando lojistas e clientes de forma simples e eficiente.'
+  },
+  values: {
+    titlePrefix: 'Nossos',
+    titleHighlight: 'valores',
+    subtitle: 'O que nos move e nos define',
+    items: [
+      {
+        icon: FiShoppingBag,
+        title: 'Simplicidade',
+        description: 'Comprar deve ser fácil, sem complicações'
+      },
+      {
+        icon: FiUsers,
+        title: 'Comunidade',
+        description: 'Apoiamos pequenos negócios em Angola'
+      },
+      {
+        icon: FiTruck,
+        title: 'Agilidade',
+        description: 'Entregamos rápido em toda Luanda'
+      }
+    ]
   }
-];
-
-export const ABOUT_FEATURES = [
-  {
-    icon: FiShield,
-    title: 'Compra segura',
-    description: 'Seus dados estão protegidos'
-  },
-  {
-    icon: FiZap,
-    title: 'Sem burocracia',
-    description: 'Compra rápida e direta'
-  },
-  {
-    icon: FiGlobe,
-    title: 'Feito em Angola',
-    description: 'Para pequenos negócios locais'
-  }
-];
+};
