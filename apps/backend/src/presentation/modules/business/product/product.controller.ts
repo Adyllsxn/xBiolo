@@ -10,7 +10,10 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
@@ -18,6 +21,8 @@ import {
   ApiParam,
   ApiQuery,
   ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -78,15 +83,47 @@ export class ProductController {
   @AdminOnly()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Criar novo produto' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+        name: { type: 'string' },
+        slug: { type: 'string' },
+        description: { type: 'string' },
+        price: { type: 'number' },
+        categoryId: { type: 'string' },
+        variations: { type: 'array', items: { type: 'string' } },
+        active: { type: 'boolean' },
+        featured: { type: 'boolean' },
+        stock: { type: 'number' },
+      },
+    },
+  })
   @ApiResponse({ status: 201, description: 'Produto criado com sucesso' })
   @ApiResponse({ status: 409, description: 'Produto com este slug já existe' })
   @ApiResponse({ status: 404, description: 'Categoria não encontrada' })
   @HttpCode(HttpStatus.CREATED)
-  create(
-    @Body() createProductDto: CreateProductDto,
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @Body() body: any,
+    @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.productService.create(createProductDto, user.id);
+    const createProductDto: CreateProductDto = {
+      name: body.name,
+      slug: body.slug,
+      description: body.description,
+      price: parseFloat(body.price),
+      categoryId: body.categoryId,
+      variations: this.parseVariations(body.variations),
+      active: body.active === 'true',
+      featured: body.featured === 'true',
+      stock: body.stock ? parseInt(body.stock, 10) : 0,
+    };
+
+    return this.productService.create(createProductDto, user.id, file);
   }
 
   @Patch(':id')
@@ -94,16 +131,49 @@ export class ProductController {
   @AdminOnly()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar produto' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+        name: { type: 'string' },
+        slug: { type: 'string' },
+        description: { type: 'string' },
+        price: { type: 'number' },
+        categoryId: { type: 'string' },
+        variations: { type: 'array', items: { type: 'string' } },
+        active: { type: 'boolean' },
+        featured: { type: 'boolean' },
+        stock: { type: 'number' },
+      },
+    },
+  })
   @ApiParam({ name: 'id', description: 'UUID do produto' })
   @ApiResponse({ status: 200, description: 'Produto atualizado' })
   @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   @ApiResponse({ status: 409, description: 'Conflito de slug' })
-  update(
+  @UseInterceptors(FileInterceptor('file'))
+  async update(
     @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
+    @Body() body: any,
+    @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.productService.update(id, updateProductDto, user.id);
+    const updateProductDto: UpdateProductDto = {};
+
+    if (body.name) updateProductDto.name = body.name;
+    if (body.slug) updateProductDto.slug = body.slug;
+    if (body.description) updateProductDto.description = body.description;
+    if (body.price) updateProductDto.price = parseFloat(body.price);
+    if (body.categoryId) updateProductDto.categoryId = body.categoryId;
+    if (body.variations)
+      updateProductDto.variations = this.parseVariations(body.variations);
+    if (body.active) updateProductDto.active = body.active === 'true';
+    if (body.featured) updateProductDto.featured = body.featured === 'true';
+    if (body.stock) updateProductDto.stock = parseInt(body.stock, 10);
+
+    return this.productService.update(id, updateProductDto, user.id, file);
   }
 
   @Delete(':id')
@@ -154,5 +224,24 @@ export class ProductController {
   ) {
     const quantityNum = parseInt(quantity, 10);
     return this.productService.updateStock(id, quantityNum, user.id);
+  }
+
+  private parseVariations(variations: any): string[] {
+    if (!variations) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    if (Array.isArray(variations)) return variations;
+
+    if (typeof variations === 'string') {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const parsed = JSON.parse(variations);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {
+        return variations.split(',').map((v: string) => v.trim());
+      }
+    }
+
+    return [];
   }
 }

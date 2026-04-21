@@ -22,10 +22,7 @@ export class CreateProductDto {
   @IsString()
   slug: string;
 
-  @ApiPropertyOptional({
-    example: 'Vestido em algodão com estampa floral',
-    description: 'Descrição do produto',
-  })
+  @ApiPropertyOptional({ example: 'Vestido em algodão com estampa floral' })
   @IsOptional()
   @IsString()
   description?: string;
@@ -36,41 +33,27 @@ export class CreateProductDto {
   @Type(() => Number)
   price: number;
 
-  @ApiProperty({
-    example: '37d01a5e-7ec4-45f9-b155-03a8c52c2f70',
-    description: 'ID da categoria',
-  })
+  @ApiProperty({ example: '37d01a5e-7ec4-45f9-b155-03a8c52c2f70' })
   @IsUUID()
   categoryId: string;
 
-  @ApiPropertyOptional({
-    example: ['P', 'M', 'G'],
-    description: 'Variações (tamanhos, cores)',
-  })
+  @ApiPropertyOptional({ example: ['P', 'M', 'G'] })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   variations?: string[];
 
-  @ApiPropertyOptional({
-    example: 'vestido-semba.jpg',
-    description: 'Nome da imagem',
-  })
-  @IsOptional()
-  @IsString()
-  imageUrl?: string;
-
-  @ApiPropertyOptional({ example: true, description: 'Produto ativo?' })
+  @ApiPropertyOptional({ example: true })
   @IsOptional()
   @IsBoolean()
   active?: boolean;
 
-  @ApiPropertyOptional({ example: false, description: 'Produto em destaque?' })
+  @ApiPropertyOptional({ example: false })
   @IsOptional()
   @IsBoolean()
   featured?: boolean;
 
-  @ApiPropertyOptional({ example: 10, description: 'Quantidade em estoque' })
+  @ApiPropertyOptional({ example: 10 })
   @IsOptional()
   @IsNumber()
   @Min(0)

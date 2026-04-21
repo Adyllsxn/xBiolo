@@ -1,13 +1,20 @@
 import 'dotenv/config';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './presentation/common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Servir arquivos estáticos da pasta uploads (imagens)
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads/',
+  });
 
   // Cookie parser (para ler cookies)
   app.use(cookieParser());
@@ -69,6 +76,7 @@ Plataforma de comércio conversacional onde o cliente bota na sacolinha e fecha 
   await app.listen(port);
   console.log(`🚀 Biolo API running on http://localhost:${port}`);
   console.log(`📚 Swagger docs: http://localhost:${port}/api-docs`);
+  console.log(`📁 Uploads disponíveis em: http://localhost:${port}/uploads/`);
 }
 
 bootstrap().catch((err) => {

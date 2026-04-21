@@ -13,13 +13,20 @@ import {
   PaginationDto,
   PaginationHelper,
 } from 'src/core/pagination/pagination.dto';
+import { UploadService } from 'src/infrastructure/storage/upload.service';
 
 @Injectable()
 export class ProductService implements IProductService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
 
-  async create(data: CreateProductDto, userId: string): Promise<IProduct> {
-    // Verifica se já existe produto com mesmo slug
+  async create(
+    data: CreateProductDto,
+    userId: string,
+    imageFile?: Express.Multer.File,
+  ): Promise<IProduct> {
     const existingBySlug = await this.prismaService.product.findFirst({
       where: { slug: data.slug, deletedAt: null },
     });
@@ -28,7 +35,6 @@ export class ProductService implements IProductService {
       throw new ConflictException(`Produto com slug "${data.slug}" já existe`);
     }
 
-    // Verifica se a categoria existe
     const category = await this.prismaService.category.findFirst({
       where: { id: data.categoryId, deletedAt: null },
     });
@@ -39,6 +45,11 @@ export class ProductService implements IProductService {
       );
     }
 
+    let imageUrl: string | null = null;
+    if (imageFile) {
+      imageUrl = await this.uploadService.saveImage(imageFile, 'products');
+    }
+
     const product = await this.prismaService.product.create({
       data: {
         name: data.name,
@@ -47,7 +58,7 @@ export class ProductService implements IProductService {
         price: data.price,
         categoryId: data.categoryId,
         variations: data.variations ?? [],
-        imageUrl: data.imageUrl ?? null,
+        imageUrl: imageUrl,
         active: data.active ?? true,
         featured: data.featured ?? false,
         stock: data.stock ?? 0,
@@ -102,13 +113,11 @@ export class ProductService implements IProductService {
   }
 
   async findOne(id: string): Promise<IProductWithCategory> {
-    // Primeiro, incrementa as views
     await this.prismaService.product.update({
       where: { id },
       data: { views: { increment: 1 } },
     });
 
-    // Depois, busca o produto com os dados atualizados
     const product = await this.prismaService.product.findFirst({
       where: { id, deletedAt: null },
       include: {
@@ -142,7 +151,6 @@ export class ProductService implements IProductService {
     limit: number;
     totalPages: number;
   }> {
-    // Verifica se a categoria existe
     const category = await this.prismaService.category.findFirst({
       where: { id: categoryId, deletedAt: null },
     });
@@ -237,8 +245,8 @@ export class ProductService implements IProductService {
     id: string,
     data: UpdateProductDto,
     userId: string,
+    imageFile?: Express.Multer.File,
   ): Promise<IProduct> {
-    // Verifica se o produto existe
     const existingProduct = await this.prismaService.product.findFirst({
       where: { id, deletedAt: null },
     });
@@ -247,7 +255,6 @@ export class ProductService implements IProductService {
       throw new NotFoundException(`Produto com ID "${id}" não encontrado`);
     }
 
-    // Verifica se o novo slug já existe em outro produto
     if (data.slug) {
       const slugExists = await this.prismaService.product.findFirst({
         where: { slug: data.slug, id: { not: id }, deletedAt: null },
@@ -260,7 +267,6 @@ export class ProductService implements IProductService {
       }
     }
 
-    // Verifica se a nova categoria existe
     if (data.categoryId) {
       const category = await this.prismaService.category.findFirst({
         where: { id: data.categoryId, deletedAt: null },
@@ -273,6 +279,15 @@ export class ProductService implements IProductService {
       }
     }
 
+    let imageUrl = existingProduct.imageUrl;
+
+    if (imageFile) {
+      if (existingProduct.imageUrl) {
+        this.uploadService.deleteImage(existingProduct.imageUrl);
+      }
+      imageUrl = await this.uploadService.saveImage(imageFile, 'products');
+    }
+
     const product = await this.prismaService.product.update({
       where: { id },
       data: {
@@ -282,7 +297,7 @@ export class ProductService implements IProductService {
         price: data.price,
         categoryId: data.categoryId,
         variations: data.variations,
-        imageUrl: data.imageUrl,
+        imageUrl: imageUrl,
         active: data.active,
         featured: data.featured,
         stock: data.stock,
@@ -312,6 +327,10 @@ export class ProductService implements IProductService {
       throw new BadRequestException(
         `Produto "${product.name}" já está deletado`,
       );
+    }
+
+    if (product.imageUrl) {
+      this.uploadService.deleteImage(product.imageUrl);
     }
 
     const deletedProduct = await this.prismaService.product.update({
