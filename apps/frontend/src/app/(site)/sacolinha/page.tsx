@@ -1,11 +1,10 @@
-// app/(site)/sacolinha/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { FiTrash2, FiMinus, FiPlus, FiShoppingBag } from 'react-icons/fi';
 import { useCart } from '@/contexts/CartContext';
+import { getImageUrl } from '@/lib/utils/imageUrl';
 
 export default function SacolinhaPage() {
   const { items, removeItem, updateQuantity, totalItems, totalPrice, clearCart } = useCart();
@@ -43,23 +42,29 @@ export default function SacolinhaPage() {
   const total = totalPrice;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-8">Minha sacolinha</h1>
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-0.5 bg-gradient-to-r from-orange-500 to-transparent" />
+          <span className="text-orange-500 text-sm uppercase tracking-wider font-semibold">
+            Sacolinha
+          </span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold">
+          <span className="font-extralight">Minha</span>{' '}
+          <span className="font-extrabold text-gray-800">sacolinha</span>
+        </h1>
+      </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Lista de produtos */}
         <div className="md:col-span-2 space-y-4">
           {items.map((item) => (
-            <div key={`${item.id}-${item.variation}`} className="flex gap-4 p-4 border rounded-lg bg-white">
-              <div className="w-20 h-20 relative bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                <Image
-                  src={item.imageUrl}
+            <div key={`${item.id}-${item.variation}`} className="flex gap-4 p-4 border rounded-xl bg-white hover:shadow-md transition">
+              <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <img
+                  src={getImageUrl(item.imageUrl)}
                   alt={item.name}
-                  fill
-                  className="object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
-                  }}
+                  className="w-full h-full object-cover"
                 />
               </div>
               
@@ -107,8 +112,7 @@ export default function SacolinhaPage() {
           </button>
         </div>
 
-        {/* Resumo do pedido */}
-        <div className="bg-gray-50 rounded-lg p-6 h-fit">
+        <div className="bg-orange-50 rounded-xl p-6 h-fit">
           <h2 className="text-lg font-semibold mb-4">Resumo do pedido</h2>
           
           <div className="space-y-3 mb-4">

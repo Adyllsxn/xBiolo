@@ -2,17 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiCreditCard, FiDollarSign, FiCheck, FiArrowLeft } from 'react-icons/fi';
+import { FiCreditCard, FiDollarSign, FiArrowLeft } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
-import Image from 'next/image';
+import { getImageUrl } from '@/lib/utils/imageUrl';
+import { getStore, type Store } from '@/lib/modules/store';
 
 export default function FinalizarPage() {
   const router = useRouter();
   const { items, totalPrice, clearCart } = useCart();
   const [mounted, setMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [store, setStore] = useState<Store | null>(null);
   const [formData, setFormData] = useState({
     nome: '',
     endereco: '',
@@ -23,9 +25,11 @@ export default function FinalizarPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+    getStore()
+      .then((data) => setStore(data))
+      .catch((error) => console.error('Erro ao carregar loja:', error));
   }, []);
 
-  // Se não tiver itens, redireciona
   useEffect(() => {
     if (mounted && items.length === 0) {
       router.push('/produtos');
@@ -44,11 +48,15 @@ export default function FinalizarPage() {
       return;
     }
 
+    if (!store) {
+      alert('Carregando informações da loja...');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Montar mensagem para o WhatsApp
     const mensagem = `
-🛍️ *NOVO PEDIDO - Biolo*
+🛍️ *NOVO PEDIDO - ${store.name}*
 
 👤 *Cliente:* ${formData.nome}
 📍 *Endereço:* ${formData.endereco}
@@ -60,55 +68,51 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
 
 💰 *TOTAL:* ${totalPrice.toLocaleString('pt-AO')} Kz
 
-🔗 Pedido gerado pelo Biolo
+🔗 Pedido gerado pelo ${store.name}
     `;
 
-    // Número do lojista (substituir pelo número real)
-    const numeroWhatsApp = '244923456789';
+    const numeroWhatsApp = store.whatsapp;
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     
-    // Limpar carrinho
     clearCart();
-    
-    // Abrir WhatsApp
     window.open(url, '_blank');
     
-    // Redirecionar para página de sucesso
     setTimeout(() => {
       router.push('/pedido-confirmado');
     }, 500);
   };
 
-  if (!mounted) {
+  if (!mounted || !store) {
     return <div className="container mx-auto px-4 py-16 text-center">Carregando...</div>;
   }
 
-  if (items.length === 0) {
-    return null; // Vai redirecionar
-  }
-
-  const total = totalPrice;
+  if (items.length === 0) return null;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
-      {/* Header */}
       <div className="mb-8">
         <Link href="/sacolinha" className="inline-flex items-center gap-2 text-gray-500 hover:text-orange-500 transition mb-4">
           <FiArrowLeft className="w-4 h-4" />
           Voltar para sacolinha
         </Link>
-        <h1 className="text-2xl font-bold">Finalizar pedido</h1>
-        <p className="text-gray-500">Preencha seus dados para completar a compra</p>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-0.5 bg-gradient-to-r from-orange-500 to-transparent" />
+          <span className="text-orange-500 text-sm uppercase tracking-wider font-semibold">
+            Finalizar
+          </span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold">
+          <span className="font-extralight">Finalizar</span>{' '}
+          <span className="font-extrabold text-gray-800">pedido</span>
+        </h1>
+        <p className="text-gray-500 mt-2">Preencha seus dados para completar a compra</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
-        {/* Formulário */}
         <div className="md:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Dados pessoais */}
-            <div className="bg-white border rounded-lg p-6">
+            <div className="bg-white border rounded-xl p-6">
               <h2 className="text-lg font-semibold mb-4">Dados de entrega</h2>
-              
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Nome completo *</label>
@@ -122,7 +126,6 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
                     placeholder="Seu nome completo"
                   />
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium mb-1">Endereço de entrega *</label>
                   <input
@@ -135,7 +138,6 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
                     placeholder="Rua, número, bairro, Luanda"
                   />
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium mb-1">Telefone (opcional)</label>
                   <input
@@ -150,10 +152,8 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
               </div>
             </div>
 
-            {/* Pagamento */}
-            <div className="bg-white border rounded-lg p-6">
+            <div className="bg-white border rounded-xl p-6">
               <h2 className="text-lg font-semibold mb-4">Forma de pagamento</h2>
-              
               <div className="space-y-3">
                 <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
                   <input
@@ -170,7 +170,6 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
                     <p className="text-xs text-gray-500">Parcelamos em até 3x sem juros</p>
                   </div>
                 </label>
-                
                 <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
                   <input
                     type="radio"
@@ -200,19 +199,16 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
           </form>
         </div>
 
-        {/* Resumo do pedido */}
-        <div className="bg-gray-50 rounded-lg p-6 h-fit">
-          <h2 className="text-lg font-semibold mb-4">Resumo do pedido</h2>
-          
+        <div className="bg-orange-50 rounded-xl p-6 h-fit">
+          <h2 className="text-lg font-semibold mb-4">Resumo del pedido</h2>
           <div className="space-y-3 max-h-80 overflow-auto mb-4">
             {items.map((item) => (
               <div key={`${item.id}-${item.variation}`} className="flex gap-3 text-sm">
-                <div className="w-12 h-12 relative bg-gray-200 rounded overflow-hidden flex-shrink-0">
-                  <Image
-                    src={item.imageUrl}
+                <div className="w-12 h-12 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                  <img
+                    src={getImageUrl(item.imageUrl)}
                     alt={item.name}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1">
@@ -223,11 +219,10 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
               </div>
             ))}
           </div>
-          
           <div className="border-t pt-4">
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span className="text-orange-500">{total.toLocaleString('pt-AO')} Kz</span>
+              <span className="text-orange-500">{totalPrice.toLocaleString('pt-AO')} Kz</span>
             </div>
             <p className="text-xs text-gray-400 mt-1">Em até 3x sem juros no cartão</p>
           </div>

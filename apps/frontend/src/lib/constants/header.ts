@@ -7,12 +7,9 @@ export const HEADER_SEARCH = {
 };
 
 export const HEADER_ACTIONS = {
-  favorites: 'Meus Favoritos',
-  account: 'Minha Conta',
   cart: 'Sacolinha',
 };
 
 export const HEADER_MOBILE = {
-  favorites: 'Meus Favoritos',
   account: 'Minha Conta',
 };

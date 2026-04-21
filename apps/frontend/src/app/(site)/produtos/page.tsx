@@ -1,46 +1,53 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { FiSearch, FiGrid, FiList, FiFilter, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import ProductCard from './_components/ProductCard';
-import { products } from '@/lib/mock/products';
+import { getAllProducts } from '@/lib/modules/product/services/getAllProducts.service';
+import type { Product } from '@/lib/modules/product/types/product.types';
 
 const ITEMS_PER_PAGE = 12;
 
 export default function ProdutosPage() {
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams.get('search') || '';
+
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Categorias únicas
-  const categories = ['all', ...new Set(products.map(p => p.category))];
+  // Categorias únicas dos produtos
+  const categories = ['all', ...new Set(products.map(p => p.category?.name || 'Sem categoria'))];
 
-  // Filtrar produtos
   useEffect(() => {
-    let filtered = products;
-
-    if (searchTerm) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(p => p.category === selectedCategory);
-    }
-
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFilteredProducts(filtered);
-    setCurrentPage(1); // Resetar página quando filtrar
-  }, [searchTerm, selectedCategory]);
+    setLoading(true);
+    getAllProducts(currentPage, ITEMS_PER_PAGE)
+      .then((response) => {
+        setProducts(response.data);
+        setTotalProducts(response.total);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar produtos:', error);
+        setLoading(false);
+      });
+  }, [currentPage]);
 
-  // Paginação
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  // Filtrar produtos localmente (busca e categoria)
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = searchTerm === '' || product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || product.category?.name === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -49,11 +56,29 @@ export default function ProdutosPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+        <p className="mt-4 text-gray-500">Carregando produtos...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Header */}
+      {/* Header alinhado à esquerda */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Catálogo de produtos</h1>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-0.5 bg-gradient-to-r from-orange-500 to-transparent" />
+          <span className="text-orange-500 text-sm uppercase tracking-wider font-semibold">
+            Catálogo
+          </span>
+        </div>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+          <span className="font-extralight">Nossos</span>{' '}
+          <span className="font-extrabold text-gray-800">produtos</span>
+        </h1>
         <p className="text-gray-500">Encontre o produto perfeito para você</p>
       </div>
 
@@ -139,12 +164,12 @@ export default function ProdutosPage() {
 
       {/* Resultados */}
       <div className="text-sm text-gray-500 mb-4">
-        Mostrando {paginatedProducts.length} de {filteredProducts.length} produtos
+        Mostrando {filteredProducts.length} de {totalProducts} produtos
         {searchTerm && ` para "${searchTerm}"`}
       </div>
 
       {/* Grid/Lista de produtos */}
-      {paginatedProducts.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-500">Nenhum produto encontrado</p>
           <button
@@ -166,8 +191,19 @@ export default function ProdutosPage() {
                 : 'space-y-4'
             }
           >
-            {paginatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} viewMode={viewMode} />
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  slug: product.slug,
+                  price: product.price,
+                  imageUrl: product.imageUrl || '/images/placeholder.jpg',
+                  category: product.category?.name || 'Sem categoria',
+                }}
+                viewMode={viewMode}
+              />
             ))}
           </div>
 

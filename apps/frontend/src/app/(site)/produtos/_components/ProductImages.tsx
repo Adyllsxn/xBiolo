@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 interface ProductImagesProps {
@@ -11,6 +10,11 @@ interface ProductImagesProps {
 
 export default function ProductImages({ images, name }: ProductImagesProps) {
   const [currentImage, setCurrentImage] = useState(0);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
+  const imageUrls = images.map(img => 
+    img ? `${API_URL}${img}` : '/images/placeholder.jpg'
+  );
 
   const nextImage = () => {
     setCurrentImage((prev) => (prev + 1) % images.length);
@@ -23,11 +27,10 @@ export default function ProductImages({ images, name }: ProductImagesProps) {
   return (
     <div className="space-y-4">
       <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden">
-        <Image
-          src={images[currentImage]}
+        <img
+          src={imageUrls[currentImage]}
           alt={name}
-          fill
-          className="object-cover"
+          className="w-full h-full object-cover"
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
           }}
@@ -53,7 +56,7 @@ export default function ProductImages({ images, name }: ProductImagesProps) {
       
       {images.length > 1 && (
         <div className="flex gap-2 justify-center">
-          {images.map((img, idx) => (
+          {imageUrls.map((img, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentImage(idx)}
@@ -61,7 +64,11 @@ export default function ProductImages({ images, name }: ProductImagesProps) {
                 currentImage === idx ? 'border-orange-500' : 'border-transparent'
               }`}
             >
-              <Image src={img} alt={`Thumbnail ${idx + 1}`} fill className="object-cover" />
+              <img
+                src={img}
+                alt={`Thumbnail ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
             </button>
           ))}
         </div>

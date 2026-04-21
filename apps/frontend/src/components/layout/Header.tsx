@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   ShoppingBag, 
   Menu, 
@@ -13,15 +14,39 @@ import { SITE_CONFIG, NAVIGATION_LINKS, HEADER_TOP_BAR, HEADER_SEARCH } from '@/
 import { useCart } from '@/contexts/CartContext';
 
 export function Header() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [mounted, setMounted] = useState(false);
   const { totalItems } = useCart();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/produtos?search=${encodeURIComponent(searchTerm.trim())}`);
+      setIsSearchOpen(false);
+      setSearchTerm('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
+    }
+  };
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
@@ -43,23 +68,28 @@ export function Header() {
           </Link>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-md">
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md">
             <div className="relative w-full">
               <input
                 type="text"
                 placeholder={HEADER_SEARCH.placeholder}
-                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Search className="h-5 w-5 text-gray-400 hover:text-orange-500 transition" />
+              </button>
             </div>
-          </div>
+          </form>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
             {/* Search button - Mobile */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-orange-600"
+              className="md:hidden p-2 text-gray-600 hover:text-orange-600 transition"
             >
               <Search className="h-5 w-5" />
             </button>
@@ -90,20 +120,26 @@ export function Header() {
 
         {/* Search Bar - Mobile */}
         {isSearchOpen && (
-          <div className="md:hidden mt-3">
-            <div className="relative">
+          <div className="md:hidden mt-3 pt-2 border-t border-gray-100">
+            <form onSubmit={handleSearch} className="relative">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder={HEADER_SEARCH.placeholder}
-                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Search className="h-5 w-5 text-gray-400 hover:text-orange-500 transition" />
+              </button>
+            </form>
           </div>
         )}
 
         {/* Navigation - Desktop */}
-        <nav className="hidden md:flex items-center gap-6 mt-3 pt-3 border-t">
+        <nav className="hidden md:flex items-center gap-6 mt-3 pt-3 border-t border-gray-100">
           {NAVIGATION_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -124,7 +160,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="py-2 text-sm font-medium hover:text-orange-600 transition"
+                className="py-2 text-sm font-medium text-gray-700 hover:text-orange-600 transition"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
