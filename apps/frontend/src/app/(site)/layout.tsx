@@ -1,8 +1,8 @@
 // app/(site)/layout.tsx
 'use client';
 
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { Header } from '@/components/layout/public/Header';
+import { Footer } from '@/components/layout/public/Footer';
 import { CartProvider } from '@/contexts/CartContext';
 
 export default function SiteLayout({

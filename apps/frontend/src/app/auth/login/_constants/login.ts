@@ -1,0 +1,15 @@
+export const LOGIN_CONFIG = {
+  title: 'Biolo',
+  subtitle: 'Painel Administrativo',
+  welcome: 'Bem-vindo de volta',
+  emailLabel: 'Email',
+  emailPlaceholder: 'admin@biolo.ao',
+  passwordLabel: 'Senha',
+  passwordPlaceholder: '••••••••',
+  buttonLogin: 'Entrar',
+  buttonLoading: 'A entrar...',
+  forgotPassword: 'Esqueceu a senha?',
+  forgotPasswordLink: '/auth/forgot-password',
+  errorMessage: 'Email ou senha inválidos',
+  copyright: `© ${new Date().getFullYear()} Biolo. Todos os direitos reservados.`,
+};

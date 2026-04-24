@@ -11,7 +11,7 @@ import {
   FOOTER_SOCIAL, 
   FOOTER_NEWSLETTER,
   FOOTER_COPYRIGHT 
-} from '@/lib/constants/footer';
+} from '@/lib/constants/public/footer';
 
 export function Footer() {
   const [email, setEmail] = useState('');
