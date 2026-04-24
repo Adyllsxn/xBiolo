@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Search, Menu, Moon, Sun, X } from 'lucide-react';
 import { TOPBAR_CONFIG } from '@/lib/constants';
-import { getMe, type User } from '@/lib/modules/user';
+import { getMe, type User } from '@/lib/modules/account';
 
 interface TopBarProps {
   onMenuClick: () => void;
@@ -22,7 +22,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     { id: 2, title: 'Produto em baixo estoque', description: 'Vestido Semba está com estoque baixo', time: 'há 1 hora', read: false },
   ]);
 
-  // Buscar dados do usuário logado
   useEffect(() => {
     getMe()
       .then((data) => {
@@ -37,10 +36,12 @@ export function TopBar({ onMenuClick }: TopBarProps) {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('biolo-admin-theme') as 'light' | 'dark';
+    const isDark = document.documentElement.classList.contains('dark');
     if (savedTheme) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+      setTheme(isDark ? 'dark' : 'light');
     }
   }, []);
 
@@ -63,7 +64,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
-  // Obter iniciais do nome
   const getInitials = (name: string): string => {
     return name
       .split(' ')
@@ -74,9 +74,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+    <header className="sticky top-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <div className="flex items-center justify-between px-4 h-16">
-        {/* Botão Menu Mobile */}
         <button
           onClick={onMenuClick}
           className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
@@ -84,7 +83,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           <Menu size={20} />
         </button>
 
-        {/* Logo / Título (Desktop) */}
         <div className="hidden lg:block min-w-[180px]">
           {!loading && user && (
             <>
@@ -96,7 +94,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           )}
         </div>
 
-        {/* Search Bar - Centralizada */}
         <div className="flex-1 flex justify-center px-4">
           <div className="hidden md:block relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -105,14 +102,12 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               placeholder={TOPBAR_CONFIG.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-sm"
             />
           </div>
         </div>
 
-        {/* Ações da direita */}
         <div className="flex items-center gap-2">
-          {/* Botão de busca mobile */}
           <button
             onClick={() => setSearchOpen(true)}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
@@ -120,7 +115,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <Search size={18} />
           </button>
 
-          {/* Tema (Dark/Light) */}
           <button
             onClick={toggleTheme}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
@@ -129,7 +123,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* Notificações */}
           <div className="relative">
             <button
               onClick={() => setNotifOpen(!notifOpen)}
@@ -150,9 +143,9 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg overflow-hidden z-50"
+                  className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden z-50"
                 >
-                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="font-semibold text-gray-900 dark:text-white">Notificações</h3>
                     {unreadCount > 0 && (
                       <button
@@ -174,7 +167,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                         <div
                           key={notif.id}
                           onClick={() => markAsRead(notif.id)}
-                          className={`p-4 border-b border-gray-100 dark:border-gray-800 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                          className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
                             !notif.read ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
                           }`}
                         >
@@ -190,7 +183,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             </AnimatePresence>
           </div>
 
-          {/* Nome do Administrador */}
           <div className="hidden md:flex items-center gap-2 ml-2">
             {!loading && user && (
               <>
@@ -213,7 +205,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-50 bg-white dark:bg-gray-950 md:hidden"
+            className="fixed inset-0 z-50 bg-white dark:bg-gray-900 md:hidden"
           >
             <div className="p-4">
               <div className="flex items-center gap-3 mb-4">
@@ -224,7 +216,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
                     placeholder={TOPBAR_CONFIG.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full text-sm"
+                    className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm"
                   />
                 </div>
                 <button onClick={() => setSearchOpen(false)} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">

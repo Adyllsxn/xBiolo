@@ -8,6 +8,8 @@ import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
 import { getImageUrl } from '@/lib/utils/imageUrl';
 import { getStore, type Store } from '@/lib/modules/store';
+import { createOrder } from '@/lib/modules/order';
+import type { CreateOrderRequest } from '@/lib/modules/order';
 
 export default function FinalizarPage() {
   const router = useRouter();
@@ -19,7 +21,7 @@ export default function FinalizarPage() {
     nome: '',
     endereco: '',
     telefone: '',
-    pagamento: 'dinheiro',
+    pagamento: 'card', // ✅ 'card' ou 'cash' (igual ao backend)
   });
 
   useEffect(() => {
@@ -55,13 +57,32 @@ export default function FinalizarPage() {
 
     setIsSubmitting(true);
 
-    const mensagem = `
+    try {
+      // Criar pedido na API
+      const orderData: CreateOrderRequest = {
+        clientName: formData.nome,
+        clientAddress: formData.endereco,
+        clientPhone: formData.telefone || '',
+        paymentMethod: formData.pagamento, // 'card' ou 'cash'
+        items: items.map(item => ({
+          productId: item.id,
+          productName: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          variation: item.variation,
+        })),
+      };
+
+      await createOrder(orderData);
+      
+      // Mensagem para WhatsApp
+      const mensagem = `
 🛍️ *NOVO PEDIDO - ${store.name}*
 
 👤 *Cliente:* ${formData.nome}
 📍 *Endereço:* ${formData.endereco}
 📞 *Telefone:* ${formData.telefone || 'Não informado'}
-💳 *Pagamento:* ${formData.pagamento === 'cartao' ? 'Cartão de crédito' : 'Dinheiro na entrega'}
+💳 *Pagamento:* ${formData.pagamento === 'card' ? 'Cartão de crédito' : 'Dinheiro na entrega'}
 
 📦 *ITENS DO PEDIDO:*
 ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - ${(item.price * item.quantity).toLocaleString('pt-AO')} Kz`).join('\n')}
@@ -71,15 +92,21 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
 🔗 Pedido gerado pelo ${store.name}
     `;
 
-    const numeroWhatsApp = store.whatsapp;
-    const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-    
-    clearCart();
-    window.open(url, '_blank');
-    
-    setTimeout(() => {
-      router.push('/pedido-confirmado');
-    }, 500);
+      const numeroWhatsApp = store.whatsapp;
+      const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+      
+      clearCart();
+      window.open(url, '_blank');
+      
+      setTimeout(() => {
+        router.push('/pedido-confirmado');
+      }, 500);
+    } catch (error) {
+      console.error('Erro ao criar pedido:', error);
+      alert('Erro ao processar pedido. Tente novamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!mounted || !store) {
@@ -159,8 +186,8 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
                   <input
                     type="radio"
                     name="pagamento"
-                    value="cartao"
-                    checked={formData.pagamento === 'cartao'}
+                    value="card"
+                    checked={formData.pagamento === 'card'}
                     onChange={handleChange}
                     className="w-4 h-4 text-orange-500"
                   />
@@ -174,8 +201,8 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
                   <input
                     type="radio"
                     name="pagamento"
-                    value="dinheiro"
-                    checked={formData.pagamento === 'dinheiro'}
+                    value="cash"
+                    checked={formData.pagamento === 'cash'}
                     onChange={handleChange}
                     className="w-4 h-4 text-orange-500"
                   />
@@ -200,7 +227,7 @@ ${items.map(item => `• ${item.name} (${item.variation}) - ${item.quantity}x - 
         </div>
 
         <div className="bg-orange-50 rounded-xl p-6 h-fit">
-          <h2 className="text-lg font-semibold mb-4">Resumo del pedido</h2>
+          <h2 className="text-lg font-semibold mb-4">Resumo do pedido</h2>
           <div className="space-y-3 max-h-80 overflow-auto mb-4">
             {items.map((item) => (
               <div key={`${item.id}-${item.variation}`} className="flex gap-3 text-sm">

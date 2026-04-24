@@ -42,14 +42,11 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
     e.preventDefault();
     try {
       await logout();
-      // Limpar dados locais
       localStorage.removeItem('biolo-sidebar-collapsed');
       localStorage.removeItem('biolo_admin_auth');
-      // Redirecionar para a página de logout (que mostra a mensagem de sessão encerrada)
       router.push('/auth/logout');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      // Mesmo com erro, redireciona para a página de logout
       router.push('/auth/logout');
     }
   };
@@ -58,7 +55,6 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
     const Icon = item.icon;
     const active = isActive(item.href);
 
-    // Caso especial para logout - usa button em vez de Link
     if (isLogout) {
       if (collapsed) {
         return (
@@ -85,7 +81,6 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
       );
     }
 
-    // Itens normais
     if (collapsed) {
       return (
         <div key={item.name} className="relative group">
@@ -94,8 +89,8 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
             onClick={handleLinkClick}
             className={`flex justify-center items-center py-2 rounded-lg transition-all ${
               active
-                ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-600'
-                : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'
+                ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400'
+                : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
             }`}
           >
             <Icon size={20} />
@@ -111,7 +106,7 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
         onClick={handleLinkClick}
         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
           active
-            ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400'
+            ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400'
             : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'
         }`}
       >
@@ -122,9 +117,9 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-950">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
       {/* Logo */}
-      <div className="h-16 flex items-center px-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+      <div className="h-16 flex items-center px-4 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
         {!collapsed ? (
           <Link href="/admin" className="flex flex-col w-full">
             <h1 className="text-lg font-bold text-orange-500">{SIDEBAR_STORE.name}</h1>
@@ -164,7 +159,7 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
       </div>
 
       {/* Logout - fixo no final */}
-      <div className="p-3 border-t border-gray-100 dark:border-gray-800 flex-shrink-0">
+      <div className="p-3 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
         {renderNavItem(logoutItem, true)}
       </div>
     </div>
@@ -213,7 +208,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
-              className="fixed top-0 left-0 z-50 w-72 h-screen bg-white dark:bg-gray-950 shadow-2xl flex flex-col"
+              className="fixed top-0 left-0 z-50 w-72 h-screen bg-white dark:bg-gray-900 shadow-2xl flex flex-col"
             >
               <div className="flex justify-end p-2 flex-shrink-0">
                 <button
@@ -237,7 +232,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
   return (
     <div className="relative h-screen">
       <aside
-        className={`h-screen bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out overflow-hidden ${
           collapsed ? 'w-16' : 'w-64'
         }`}
       >

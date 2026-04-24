@@ -1,7 +1,5 @@
-// Types
 export type {
   Product,
-  Category,
   PaginatedResponse,
   CreateProductDto,
   UpdateProductDto,
@@ -9,4 +7,4 @@ export type {
 
 // Services
 export { getAllProducts } from "./services/getAllProducts.service";
-export { getProductById } from "./services/getProductBySlug.service";
+export { getProductBySlug } from "./services/getProductBySlug.service";
