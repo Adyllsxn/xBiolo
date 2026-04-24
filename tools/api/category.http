@@ -1,2 +1,0 @@
-### Listar todas categorias
-GET http://localhost:3001/categories
