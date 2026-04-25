@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SITE_CONFIG, NAVIGATION_LINKS, HEADER_TOP_BAR, HEADER_SEARCH } from '@/lib/constants';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/lib/contexts/CartContext';
 
 export function Header() {
   const router = useRouter();

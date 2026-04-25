@@ -3,7 +3,7 @@
 
 import { Header } from '@/components/layout/public/Header';
 import { Footer } from '@/components/layout/public/Footer';
-import { CartProvider } from '@/contexts/CartContext';
+import { CartProvider } from '@/lib/contexts/CartContext';
 
 export default function SiteLayout({
   children,

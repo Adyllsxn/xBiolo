@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiCreditCard, FiDollarSign, FiArrowLeft } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/lib/contexts/CartContext';
 import Link from 'next/link';
 import { getImageUrl } from '@/lib/utils/imageUrl';
 import { getStore, type Store } from '@/lib/modules/store';

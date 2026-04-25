@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { FiShoppingBag, FiMinus, FiPlus, FiCheck } from 'react-icons/fi';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/lib/contexts/CartContext';
 
 interface ProductInfoProps {
   product: {

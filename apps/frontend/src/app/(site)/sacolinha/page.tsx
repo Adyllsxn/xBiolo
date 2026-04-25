@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FiTrash2, FiMinus, FiPlus, FiShoppingBag } from 'react-icons/fi';
-import { useCart } from '@/contexts/CartContext';
+import { useCart } from '@/lib/contexts/CartContext';
 import { getImageUrl } from '@/lib/utils/imageUrl';
 
 export default function SacolinhaPage() {
