@@ -1,5 +1,3 @@
-import { FiPackage, FiTag, FiDollarSign, FiGrid, FiBox, FiImage } from 'react-icons/fi';
-
 export const PRODUTOS_CONFIG = {
   title: 'Produtos',
   subtitle: 'Gerencie seu catálogo de produtos',
