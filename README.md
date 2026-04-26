@@ -1,82 +1,69 @@
-# 🛍️ Biolo
+<div align="center">
+  <img src="./docs/assets/logo.svg" alt="xBiolo Logo" width="160" />
 
-**Biolo** é um catálogo digital para pequenos negócios em Angola.  
-O cliente escolhe os produtos, bota na sacolinha e fecha o pedido direto no WhatsApp.  
-Sem complicação, sem taxa, sem dor de cabeça.
-
----
-
-## 🚀 O que o Biolo faz
-
-- Catálogo de produtos organizado por categorias  
-- Filtros por preço e categoria  
-- Detalhe completo de cada produto  
-- Sacolinha (carrinho de compras)  
-- Finalização do pedido no WhatsApp  
-- Dashboard para o lojista gerenciar seus produtos  
+  **Catálogo digital para pequenos negócios em Angola**
+  
+  [![Website](https://img.shields.io/badge/website-xbiolo.ao-orange?style=for-the-badge&logo=google-chrome)](https://xbiolo.ao)
+  [![Status](https://img.shields.io/badge/status-development-yellow?style=for-the-badge)](./docs/STATUS.md)
+  [![License](https://img.shields.io/badge/license-commercial-blue?style=for-the-badge)](LICENSE)
+  
+  <br/>
+  
+  > O cliente escolhe os produtos, bota na sacolinha e fecha o pedido direto no WhatsApp.  
+  > Sem complicação, sem taxa, sem dor de cabeça.
+</div>
 
 ---
 
-## 🎯 Para quem é o Biolo
+## 📖 Sobre o Projeto
 
-- Pequenos negócios em Angola  
-- Lojistas que já vendem no WhatsApp  
-- Quem quer um catálogo profissional sem pagar caro  
-- Quem não quer complicação com site, hospedagem ou programação  
+O **xBiolo** é uma plataforma de catálogo digital desenvolvida especialmente para pequenos negócios em Angola, oferecendo uma solução simples e eficiente para lojistas que desejam vender online sem complicações.
 
----
+### 🎯 Problemática
+- Pequenos negócios não têm presença digital profissional
+- Divulgação via WhatsApp é desorganizada (muitas fotos, confusão de preços)
+- Soluções existentes são caras ou complexas demais
 
-## 📦 Planos disponíveis
-
-| Plano | Preço | O que inclui |
-|---|---|---|
-| **Biolo Borla** | 0 Kz | Catálogo básico, até 10 produtos |
-| **Biolo Raço** | 2.500 Kz/mês | Produtos ilimitados, dashboard completo |
-| **Biolo Salu** | 5.000 Kz/mês | Multi-vendedores, relatórios, prioridade |
+### 💡 Solução
+- Catálogo digital organizado por categorias
+- Sacolinha (carrinho de compras)
+- Finalização direta no WhatsApp do lojista
+- Dashboard administrativo completo
 
 ---
 
-## 📄 Documentação
+## 📚 Documentação
 
-- [Como funciona para o lojista](./docs/para-lojista.md)  
-- [Como funciona para o cliente](./docs/para-cliente.md)  
-- [Planos e preços](./docs/planos.md)  
-- [Perguntas frequentes](./docs/faq.md)  
-
----
-
-## 🌐 Acesse o Biolo
-
-- **Site oficial:** [https://biolo.ao](https://biolo.ao)  
-- **Demo do catálogo:** [https://demo.biolo.ao](https://demo.biolo.ao)  
-- **Dashboard do lojista:** [https://admin.biolo.ao](https://admin.biolo.ao)  
+| Documento | Descrição |
+|-----------|------------|
+| [✨ Funcionalidades](./docs/FEATURES.md) | Detalhamento completo de todas as funcionalidades |
+| [🛠️ Tecnologias](./docs/TECH.md) | Stack tecnológica utilizada no projeto |
 
 ---
 
-## 📸 Como funciona
+## 📸 Demo
 
-![Catálogo Biolo](./docs/assets/catalogo.png "Catálogo de produtos")  
-*Catálogo de produtos com filtros e sacolinha*
-
-![Finalização no WhatsApp](./docs/assets/whatsapp.png "Pedido no WhatsApp")  
-*Cliente finaliza e o pedido vai direto pro WhatsApp do lojista*
-
----
-
-## 👨‍💻 Autor
-
-**Domingos Nascimento (Adyllsxn)**  
-
-- [LinkedIn](https://www.linkedin.com/in/adyllsxn/)  
-- [GitHub](https://github.com/Adyllsxn)  
+<div align="center">
+  <div style="display: flex; gap: 20px; justify-content: center;">
+    <div style="flex: 1;">
+      <img src="./docs/assets/client.svg" alt="Visual Demo Cliente" width="100%" />
+      <p align="center"><b>🏠 Catálogo do Cliente</b></p>
+    </div>
+    <div style="flex: 1;">
+      <img src="./docs/assets/adm.svg" alt="Visual Demo Admin" width="100%" />
+      <p align="center"><b>📊 Dashboard Administrativo</b></p>
+    </div>
+  </div>
+</div>
 
 ---
 
 ## 📄 Licença
 
-Este projeto é de uso comercial. Para pequenos negócios em Angola.  
-Para mais informações, entre em contato.
+Este projeto é de **uso comercial**. Para pequenos negócios em Angola.
+
+- O código fonte é privado
+- Uso permitido apenas mediante assinatura
+- Proibida redistribuição não autorizada
 
 ---
-
-**🇦🇴 Biolo - bota na sacolinha, fecha no WhatsApp, o lojista se vira**
