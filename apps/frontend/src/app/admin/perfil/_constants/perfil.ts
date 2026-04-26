@@ -55,6 +55,29 @@ export const PERFIL_CONFIG = {
     },
   },
   
+  toast: {
+    profileSuccess: {
+      title: 'Perfil atualizado!',
+      description: 'Suas informações foram salvas com sucesso.',
+    },
+    passwordSuccess: {
+      title: 'Senha alterada!',
+      description: 'Sua senha foi alterada com sucesso.',
+    },
+    passwordError: {
+      title: 'Senha incorreta',
+      description: 'A senha atual está incorreta. Tente novamente.',
+    },
+    invalidData: {
+      title: 'Dados inválidos',
+      description: 'Verifique as informações e tente novamente.',
+    },
+    error: {
+      title: 'Erro',
+      description: 'Ocorreu um erro ao processar sua solicitação. Tente novamente.',
+    },
+  },
+  
   messages: {
     saveSuccess: 'Perfil atualizado com sucesso!',
     passwordSuccess: 'Senha alterada com sucesso!',

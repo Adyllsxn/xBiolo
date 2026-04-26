@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { PEDIDOS_CONFIG, STATUS_OPTIONS } from '../_constants/pedidos';
 import { updateOrderStatus, type Order } from '@/lib/modules/order';
 
@@ -35,12 +36,20 @@ export function UpdateStatusModal({ open, onClose, onSuccess, order }: UpdateSta
     setLoading(true);
     try {
       await updateOrderStatus(order.id, status);
-      alert(PEDIDOS_CONFIG.messages.statusSuccess);
+      
+      toast.success(PEDIDOS_CONFIG.toast.statusSuccess.title, {
+        description: PEDIDOS_CONFIG.toast.statusSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PEDIDOS_CONFIG.messages.error);
+      toast.error(PEDIDOS_CONFIG.toast.error.title, {
+        description: PEDIDOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

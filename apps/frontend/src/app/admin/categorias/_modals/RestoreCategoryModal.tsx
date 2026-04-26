@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { CATEGORIAS_CONFIG } from '../_constants/categorias';
 import { restoreCategory, type Category } from '@/lib/modules/category';
 
@@ -27,12 +28,20 @@ export function RestoreCategoryModal({ open, onClose, onSuccess, category }: Res
     setLoading(true);
     try {
       await restoreCategory(category.id);
-      alert(CATEGORIAS_CONFIG.messages.restoreSuccess);
+      
+      toast.success(CATEGORIAS_CONFIG.toast.restoreSuccess.title, {
+        description: CATEGORIAS_CONFIG.toast.restoreSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(CATEGORIAS_CONFIG.messages.error);
+      toast.error(CATEGORIAS_CONFIG.toast.error.title, {
+        description: CATEGORIAS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

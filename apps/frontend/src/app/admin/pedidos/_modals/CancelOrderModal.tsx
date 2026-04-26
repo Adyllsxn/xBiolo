@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { PEDIDOS_CONFIG } from '../_constants/pedidos';
 import { cancelOrder, type Order } from '@/lib/modules/order';
 
@@ -27,12 +28,20 @@ export function CancelOrderModal({ open, onClose, onSuccess, order }: CancelOrde
     setLoading(true);
     try {
       await cancelOrder(order.id);
-      alert(PEDIDOS_CONFIG.messages.cancelSuccess);
+      
+      toast.success(PEDIDOS_CONFIG.toast.cancelSuccess.title, {
+        description: PEDIDOS_CONFIG.toast.cancelSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PEDIDOS_CONFIG.messages.error);
+      toast.error(PEDIDOS_CONFIG.toast.error.title, {
+        description: PEDIDOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { USUARIOS_CONFIG, ROLE_OPTIONS } from '../_constants/usuarios';
 import { updateUserRole, type User } from '@/lib/modules/account';
 
@@ -42,12 +43,20 @@ export function ChangeRoleModal({ open, onClose, onSuccess, user }: ChangeRoleMo
     setLoading(true);
     try {
       await updateUserRole({ userId: user.id, role: role as 'admin' | 'employee' });
-      alert(USUARIOS_CONFIG.messages.roleSuccess);
+      
+      toast.success(USUARIOS_CONFIG.toast.roleSuccess.title, {
+        description: USUARIOS_CONFIG.toast.roleSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(USUARIOS_CONFIG.messages.error);
+      toast.error(USUARIOS_CONFIG.toast.error.title, {
+        description: USUARIOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

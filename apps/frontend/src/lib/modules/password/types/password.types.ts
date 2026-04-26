@@ -7,3 +7,11 @@ export interface ChangePasswordRequest {
 export interface ChangePasswordResponse {
   message: string;
 }
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}

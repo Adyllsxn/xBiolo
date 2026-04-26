@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import { PRODUTOS_CONFIG } from '../_constants/produtos';
 import { updateStock, type Product } from '@/lib/modules/product';
 
@@ -30,13 +31,21 @@ export function UpdateStockModal({ open, onClose, onSuccess, product }: UpdateSt
     setLoading(true);
     try {
       await updateStock(product.id, parseInt(quantity));
-      alert(PRODUTOS_CONFIG.messages.stockSuccess);
+      
+      toast.success(PRODUTOS_CONFIG.toast.stockSuccess.title, {
+        description: PRODUTOS_CONFIG.toast.stockSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
       setQuantity('');
     } catch (error) {
       console.error(error);
-      alert(PRODUTOS_CONFIG.messages.error);
+      toast.error(PRODUTOS_CONFIG.toast.error.title, {
+        description: PRODUTOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

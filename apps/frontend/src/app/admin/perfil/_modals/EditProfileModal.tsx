@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FiUser, FiMail, FiSave, FiX } from 'react-icons/fi';
+import { toast } from 'sonner';
 import { PERFIL_CONFIG } from '../_constants/perfil';
 import { updateUser } from '@/lib/modules/account';
 
@@ -52,12 +53,19 @@ export function EditProfileModal({ open, onClose, onSuccess, userId, currentName
         await updateUser(userId, updateData);
       }
       
-      alert(PERFIL_CONFIG.messages.saveSuccess);
+      toast.success(PERFIL_CONFIG.toast.profileSuccess.title, {
+        description: PERFIL_CONFIG.toast.profileSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PERFIL_CONFIG.messages.error);
+      toast.error(PERFIL_CONFIG.toast.error.title, {
+        description: PERFIL_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

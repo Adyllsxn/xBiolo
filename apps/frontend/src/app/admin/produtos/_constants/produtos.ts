@@ -112,6 +112,33 @@ export const PRODUTOS_CONFIG = {
     },
   },
   
+  toast: {
+    createSuccess: {
+      title: 'Produto criado!',
+      description: 'O produto foi adicionado ao catálogo com sucesso.',
+    },
+    updateSuccess: {
+      title: 'Produto atualizado!',
+      description: 'As alterações foram salvas com sucesso.',
+    },
+    deleteSuccess: {
+      title: 'Produto excluído!',
+      description: 'O produto foi movido para a lixeira.',
+    },
+    restoreSuccess: {
+      title: 'Produto restaurado!',
+      description: 'O produto foi restaurado com sucesso.',
+    },
+    stockSuccess: {
+      title: 'Estoque atualizado!',
+      description: 'A quantidade em estoque foi atualizada.',
+    },
+    error: {
+      title: 'Erro!',
+      description: 'Ocorreu um erro ao processar sua solicitação. Tente novamente.',
+    },
+  },
+  
   status: {
     active: {
       label: 'Ativo',

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 import { CATEGORIAS_CONFIG } from '../_constants/categorias';
 import { updateCategory, type Category } from '@/lib/modules/category';
 
@@ -77,12 +78,19 @@ export function EditCategoryModal({ open, onClose, onSuccess, category }: EditCa
       
       await updateCategory(category.id, updateData);
       
-      alert(CATEGORIAS_CONFIG.messages.updateSuccess);
+      toast.success(CATEGORIAS_CONFIG.toast.updateSuccess.title, {
+        description: CATEGORIAS_CONFIG.toast.updateSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(CATEGORIAS_CONFIG.messages.error);
+      toast.error(CATEGORIAS_CONFIG.toast.error.title, {
+        description: CATEGORIAS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

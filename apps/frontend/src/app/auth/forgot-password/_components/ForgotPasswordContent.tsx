@@ -4,30 +4,51 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FiMail, FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import { FORGOT_PASSWORD_CONFIG } from '../_constants/forgot-password';
+import { forgotPassword } from '@/lib/modules/password';
+import { AxiosError } from 'axios';
 
 export default function ForgotPasswordContent() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSent(false);
 
-    // TODO: Integrar com API de recuperação de senha
-    // Simulação
-    setTimeout(() => {
-      if (email === 'admin@biolo.ao') {
-        setSent(true);
+    try {
+      await forgotPassword({ email });
+      setSent(true);
+      toast.success('Email enviado!', {
+        description: FORGOT_PASSWORD_CONFIG.successMessage,
+        duration: 5000,
+      });
+    } catch (err: unknown) {
+      console.error('Erro ao recuperar senha:', err);
+      
+      if (err instanceof AxiosError && err.response?.status === 400) {
+        toast.error('Erro', {
+          description: 'Email inválido. Verifique e tente novamente.',
+          duration: 5000,
+        });
+      } else if (err instanceof AxiosError && err.response?.status === 429) {
+        toast.error('Muitas tentativas', {
+          description: 'Aguarde alguns segundos antes de tentar novamente.',
+          duration: 5000,
+        });
       } else {
-        setError(FORGOT_PASSWORD_CONFIG.errorMessage);
+        // Por segurança, API sempre retorna sucesso mesmo se email não existir
+        setSent(true);
+        toast.success('Instruções enviadas', {
+          description: FORGOT_PASSWORD_CONFIG.successMessage,
+          duration: 5000,
+        });
       }
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -77,17 +98,6 @@ export default function ForgotPasswordContent() {
                     </div>
                   </div>
 
-                  {/* Error message */}
-                  {error && (
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-sm text-red-500 text-center"
-                    >
-                      {error}
-                    </motion.p>
-                  )}
-
                   {/* Submit button */}
                   <button
                     type="submit"
@@ -115,20 +125,28 @@ export default function ForgotPasswordContent() {
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                   {FORGOT_PASSWORD_CONFIG.successMessage}
                 </p>
+                <Link
+                  href="/auth/login"
+                  className="inline-block w-full py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition-all duration-200 text-center"
+                >
+                  Voltar para o login
+                </Link>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Link voltar */}
-          <div className="text-center mt-6">
-            <Link
-              href={FORGOT_PASSWORD_CONFIG.backLink}
-              className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition"
-            >
-              <FiArrowLeft size={16} />
-              {FORGOT_PASSWORD_CONFIG.buttonBack}
-            </Link>
-          </div>
+          {/* Link voltar (apenas no formulário) */}
+          {!sent && (
+            <div className="text-center mt-6">
+              <Link
+                href={FORGOT_PASSWORD_CONFIG.backLink}
+                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-500 transition"
+              >
+                <FiArrowLeft size={16} />
+                {FORGOT_PASSWORD_CONFIG.buttonBack}
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Créditos */}

@@ -9,6 +9,5 @@ export const FORGOT_PASSWORD_CONFIG = {
   buttonBack: 'Voltar para o login',
   backLink: '/auth/login',
   successMessage: 'Enviamos as instruções para o seu email.',
-  errorMessage: 'Email não encontrado. Verifique e tente novamente.',
   copyright: `© ${new Date().getFullYear()} Biolo. Todos os direitos reservados.`,
 };

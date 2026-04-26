@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { PRODUTOS_CONFIG } from '../_constants/produtos';
 import { createProduct } from '@/lib/modules/product';
 import { getAllCategories, type Category } from '@/lib/modules/category';
@@ -78,7 +79,11 @@ export function CreateProductModal({ open, onClose, onSuccess }: CreateProductMo
         file: formData.file || undefined,
       });
       
-      alert(PRODUTOS_CONFIG.messages.createSuccess);
+      toast.success(PRODUTOS_CONFIG.toast.createSuccess.title, {
+        description: PRODUTOS_CONFIG.toast.createSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
       setFormData({
@@ -95,7 +100,10 @@ export function CreateProductModal({ open, onClose, onSuccess }: CreateProductMo
       });
     } catch (error) {
       console.error(error);
-      alert(PRODUTOS_CONFIG.messages.error);
+      toast.error(PRODUTOS_CONFIG.toast.error.title, {
+        description: PRODUTOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

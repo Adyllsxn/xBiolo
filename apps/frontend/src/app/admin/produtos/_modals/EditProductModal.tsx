@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { PRODUTOS_CONFIG } from '../_constants/produtos';
 import { updateProduct, type Product } from '@/lib/modules/product';
 import { getAllCategories, type Category } from '@/lib/modules/category';
@@ -128,12 +129,19 @@ export function EditProductModal({ open, onClose, onSuccess, product }: EditProd
       
       await updateProduct(product.id, updateData);
       
-      alert(PRODUTOS_CONFIG.messages.updateSuccess);
+      toast.success(PRODUTOS_CONFIG.toast.updateSuccess.title, {
+        description: PRODUTOS_CONFIG.toast.updateSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PRODUTOS_CONFIG.messages.error);
+      toast.error(PRODUTOS_CONFIG.toast.error.title, {
+        description: PRODUTOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

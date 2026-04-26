@@ -13,6 +13,29 @@ export const CATEGORIAS_CONFIG = {
     },
   },
   
+  toast: {
+    createSuccess: {
+      title: 'Categoria criada!',
+      description: 'A categoria foi adicionada com sucesso.',
+    },
+    updateSuccess: {
+      title: 'Categoria atualizada!',
+      description: 'As alterações foram salvas com sucesso.',
+    },
+    deleteSuccess: {
+      title: 'Categoria excluída!',
+      description: 'A categoria foi movida para a lixeira.',
+    },
+    restoreSuccess: {
+      title: 'Categoria restaurada!',
+      description: 'A categoria foi restaurada com sucesso.',
+    },
+    error: {
+      title: 'Erro!',
+      description: 'Ocorreu um erro ao processar sua solicitação. Tente novamente.',
+    },
+  },
+  
   form: {
     name: {
       label: 'Nome da categoria',

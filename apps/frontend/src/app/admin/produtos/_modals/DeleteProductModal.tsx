@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { PRODUTOS_CONFIG } from '../_constants/produtos';
 import { deleteProduct, type Product } from '@/lib/modules/product';
 
@@ -27,12 +28,20 @@ export function DeleteProductModal({ open, onClose, onSuccess, product }: Delete
     setLoading(true);
     try {
       await deleteProduct(product.id);
-      alert(PRODUTOS_CONFIG.messages.deleteSuccess);
+      
+      toast.success(PRODUTOS_CONFIG.toast.deleteSuccess.title, {
+        description: PRODUTOS_CONFIG.toast.deleteSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PRODUTOS_CONFIG.messages.error);
+      toast.error(PRODUTOS_CONFIG.toast.error.title, {
+        description: PRODUTOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

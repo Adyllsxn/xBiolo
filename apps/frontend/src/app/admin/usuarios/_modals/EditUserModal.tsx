@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 import { USUARIOS_CONFIG } from '../_constants/usuarios';
 import { updateUser, type User } from '@/lib/modules/account';
 
@@ -56,12 +57,19 @@ export function EditUserModal({ open, onClose, onSuccess, user }: EditUserModalP
       
       await updateUser(user.id, updateData);
       
-      alert(USUARIOS_CONFIG.messages.updateSuccess);
+      toast.success(USUARIOS_CONFIG.toast.updateSuccess.title, {
+        description: USUARIOS_CONFIG.toast.updateSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(USUARIOS_CONFIG.messages.error);
+      toast.error(USUARIOS_CONFIG.toast.error.title, {
+        description: USUARIOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

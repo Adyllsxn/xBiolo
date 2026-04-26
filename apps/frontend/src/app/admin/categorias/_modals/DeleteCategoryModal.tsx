@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { CATEGORIAS_CONFIG } from '../_constants/categorias';
 import { deleteCategory, type Category } from '@/lib/modules/category';
 
@@ -27,12 +28,20 @@ export function DeleteCategoryModal({ open, onClose, onSuccess, category }: Dele
     setLoading(true);
     try {
       await deleteCategory(category.id);
-      alert(CATEGORIAS_CONFIG.messages.deleteSuccess);
+      
+      toast.success(CATEGORIAS_CONFIG.toast.deleteSuccess.title, {
+        description: CATEGORIAS_CONFIG.toast.deleteSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(CATEGORIAS_CONFIG.messages.error);
+      toast.error(CATEGORIAS_CONFIG.toast.error.title, {
+        description: CATEGORIAS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FiEye, FiEyeOff, FiLock } from 'react-icons/fi';
+import { toast } from 'sonner';
 import { PERFIL_CONFIG } from '../_constants/perfil';
 import { changePassword } from '@/lib/modules/password';
 import { AxiosError } from 'axios';
@@ -57,7 +58,11 @@ export function ChangePasswordModal({ open, onClose, onSuccess }: ChangePassword
         confirmNewPassword: formData.confirmPassword,
       });
       
-      alert(PERFIL_CONFIG.messages.passwordSuccess);
+      toast.success(PERFIL_CONFIG.toast.passwordSuccess.title, {
+        description: PERFIL_CONFIG.toast.passwordSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
       setFormData({
@@ -74,13 +79,29 @@ export function ChangePasswordModal({ open, onClose, onSuccess }: ChangePassword
         
         if (status === 401) {
           setError('Senha atual inválida');
+          toast.error(PERFIL_CONFIG.toast.passwordError.title, {
+            description: PERFIL_CONFIG.toast.passwordError.description,
+            duration: 5000,
+          });
         } else if (status === 400) {
           setError('Dados inválidos. Verifique as informações.');
+          toast.error(PERFIL_CONFIG.toast.invalidData.title, {
+            description: PERFIL_CONFIG.toast.invalidData.description,
+            duration: 5000,
+          });
         } else {
           setError(PERFIL_CONFIG.messages.error);
+          toast.error(PERFIL_CONFIG.toast.error.title, {
+            description: PERFIL_CONFIG.toast.error.description,
+            duration: 5000,
+          });
         }
       } else {
         setError(PERFIL_CONFIG.messages.error);
+        toast.error(PERFIL_CONFIG.toast.error.title, {
+          description: PERFIL_CONFIG.toast.error.description,
+          duration: 5000,
+        });
       }
     } finally {
       setLoading(false);

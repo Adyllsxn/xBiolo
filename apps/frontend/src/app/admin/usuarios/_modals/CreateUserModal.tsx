@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { toast } from 'sonner';
 import { USUARIOS_CONFIG } from '../_constants/usuarios';
 import { createUser } from '@/lib/modules/account';
 
@@ -49,7 +50,11 @@ export function CreateUserModal({ open, onClose, onSuccess }: CreateUserModalPro
         password: formData.password,
       });
       
-      alert(USUARIOS_CONFIG.messages.createSuccess);
+      toast.success(USUARIOS_CONFIG.toast.createSuccess.title, {
+        description: USUARIOS_CONFIG.toast.createSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
       setFormData({
@@ -61,7 +66,10 @@ export function CreateUserModal({ open, onClose, onSuccess }: CreateUserModalPro
       setShowPassword(false);
     } catch (error) {
       console.error(error);
-      alert(USUARIOS_CONFIG.messages.error);
+      toast.error(USUARIOS_CONFIG.toast.error.title, {
+        description: USUARIOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

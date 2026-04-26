@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -76,6 +77,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-gray-50 font-sans">
         {children}
+        <Toaster 
+          position="top-right"
+          richColors
+          closeButton
+          duration={4000}
+        />
       </body>
     </html>
   );

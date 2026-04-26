@@ -88,6 +88,33 @@ export const USUARIOS_CONFIG = {
     },
   },
   
+  toast: {
+    createSuccess: {
+      title: 'Utilizador criado!',
+      description: 'O novo utilizador foi adicionado com sucesso.',
+    },
+    updateSuccess: {
+      title: 'Utilizador atualizado!',
+      description: 'As informações foram salvas com sucesso.',
+    },
+    roleSuccess: {
+      title: 'Função alterada!',
+      description: 'A função do utilizador foi atualizada.',
+    },
+    deleteSuccess: {
+      title: 'Utilizador excluído!',
+      description: 'O utilizador foi movido para a lixeira.',
+    },
+    restoreSuccess: {
+      title: 'Utilizador restaurado!',
+      description: 'O utilizador foi restaurado com sucesso.',
+    },
+    error: {
+      title: 'Erro!',
+      description: 'Ocorreu um erro ao processar sua solicitação. Tente novamente.',
+    },
+  },
+  
   role: {
     admin: {
       label: 'Administrador',

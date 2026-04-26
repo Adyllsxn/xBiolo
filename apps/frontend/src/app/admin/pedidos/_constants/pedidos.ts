@@ -15,6 +15,21 @@ export const PEDIDOS_CONFIG = {
     },
   },
   
+  toast: {
+    statusSuccess: {
+      title: 'Status atualizado!',
+      description: 'O status do pedido foi alterado com sucesso.',
+    },
+    cancelSuccess: {
+      title: 'Pedido cancelado!',
+      description: 'O pedido foi cancelado com sucesso.',
+    },
+    error: {
+      title: 'Erro!',
+      description: 'Ocorreu um erro ao processar sua solicitação. Tente novamente.',
+    },
+  },
+  
   status: {
     pending: {
       label: 'Pendente',

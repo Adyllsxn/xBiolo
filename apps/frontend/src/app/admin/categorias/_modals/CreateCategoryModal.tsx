@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 import { CATEGORIAS_CONFIG } from '../_constants/categorias';
 import { createCategory } from '@/lib/modules/category';
 
@@ -53,7 +54,11 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
         active: formData.active,
       });
       
-      alert(CATEGORIAS_CONFIG.messages.createSuccess);
+      toast.success(CATEGORIAS_CONFIG.toast.createSuccess.title, {
+        description: CATEGORIAS_CONFIG.toast.createSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
       setFormData({
@@ -65,7 +70,10 @@ export function CreateCategoryModal({ open, onClose, onSuccess }: CreateCategory
       });
     } catch (error) {
       console.error(error);
-      alert(CATEGORIAS_CONFIG.messages.error);
+      toast.error(CATEGORIAS_CONFIG.toast.error.title, {
+        description: CATEGORIAS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

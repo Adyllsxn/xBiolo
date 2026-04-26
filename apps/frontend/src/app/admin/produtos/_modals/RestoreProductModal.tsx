@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { PRODUTOS_CONFIG } from '../_constants/produtos';
 import { restoreProduct, type Product } from '@/lib/modules/product';
 
@@ -27,12 +28,20 @@ export function RestoreProductModal({ open, onClose, onSuccess, product }: Resto
     setLoading(true);
     try {
       await restoreProduct(product.id);
-      alert(PRODUTOS_CONFIG.messages.restoreSuccess);
+      
+      toast.success(PRODUTOS_CONFIG.toast.restoreSuccess.title, {
+        description: PRODUTOS_CONFIG.toast.restoreSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(PRODUTOS_CONFIG.messages.error);
+      toast.error(PRODUTOS_CONFIG.toast.error.title, {
+        description: PRODUTOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }

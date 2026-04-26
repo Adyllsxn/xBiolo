@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { USUARIOS_CONFIG } from '../_constants/usuarios';
 import { restoreUser, type User } from '@/lib/modules/account';
 
@@ -27,12 +28,20 @@ export function RestoreUserModal({ open, onClose, onSuccess, user }: RestoreUser
     setLoading(true);
     try {
       await restoreUser(user.id);
-      alert(USUARIOS_CONFIG.messages.restoreSuccess);
+      
+      toast.success(USUARIOS_CONFIG.toast.restoreSuccess.title, {
+        description: USUARIOS_CONFIG.toast.restoreSuccess.description,
+        duration: 4000,
+      });
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      alert(USUARIOS_CONFIG.messages.error);
+      toast.error(USUARIOS_CONFIG.toast.error.title, {
+        description: USUARIOS_CONFIG.toast.error.description,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
