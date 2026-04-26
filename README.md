@@ -47,12 +47,12 @@ O **xBiolo** é uma plataforma de catálogo digital desenvolvida especialmente p
 <div align="center">
   <table>
     <tr>
-      <td align="center" width="40%">
+      <td align="center" width="50%">
         <img src="./docs/assets/client.svg" alt="Catálogo do Cliente" width="90%" />
         <br />
         <b>🏠 Catálogo do Cliente</b>
       </td>
-      <td align="center" width="40%">
+      <td align="center" width="50%">
         <img src="./docs/assets/adm.svg" alt="Dashboard Admin" width="90%" />
         <br />
         <b>📊 Dashboard Administrativo</b>
