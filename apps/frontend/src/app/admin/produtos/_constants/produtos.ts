@@ -1,6 +1,7 @@
 export const PRODUTOS_CONFIG = {
   title: 'Produtos',
   subtitle: 'Gerencie seu catálogo de produtos',
+  limit: 5,
   
   table: {
     columns: {

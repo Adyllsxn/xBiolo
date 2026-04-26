@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FiPlus, FiSearch } from 'react-icons/fi';
-import { getAllProducts, type Product } from '@/lib/modules/product';
+import { getAllProducts, type Product, type PaginatedResponse } from '@/lib/modules/product';
 import { ProductTable } from './_components/ProductTable';
+import { Pagination } from './_components/Pagination';
 import { CreateProductModal } from './_modals/CreateProductModal';
 import { EditProductModal } from './_modals/EditProductModal';
 import { DeleteProductModal } from './_modals/DeleteProductModal';
@@ -17,6 +18,10 @@ export default function ProdutosPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -24,11 +29,14 @@ export default function ProdutosPage() {
   const [stockModalOpen, setStockModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page: number = 1) => {
     try {
       setLoading(true);
-      const response = await getAllProducts(1, 100);
+      const response: PaginatedResponse<Product> = await getAllProducts(page, PRODUTOS_CONFIG.limit);
       setProducts(response.data);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.total);
+      setCurrentPage(response.page);
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
     } finally {
@@ -38,13 +46,15 @@ export default function ProdutosPage() {
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchProducts();
-  }, []);
+    fetchProducts(currentPage);
+  }, [currentPage]);
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.slug.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = search
+    ? products.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.slug.toLowerCase().includes(search.toLowerCase())
+      )
+    : products;
 
   if (loading) {
     return (
@@ -62,7 +72,9 @@ export default function ProdutosPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">{PRODUTOS_CONFIG.title}</h1>
-          <p className="text-gray-500 mt-1">{PRODUTOS_CONFIG.subtitle}</p>
+          <p className="text-gray-500 mt-1">
+            {PRODUTOS_CONFIG.subtitle} • {totalItems} produtos
+          </p>
         </div>
         <Button onClick={() => setCreateModalOpen(true)} className="bg-orange-500 hover:bg-orange-600">
           <FiPlus className="w-4 h-4 mr-2" />
@@ -100,37 +112,45 @@ export default function ProdutosPage() {
         }}
       />
 
+      {!search && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      )}
+
       <CreateProductModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
-        onSuccess={fetchProducts}
+        onSuccess={() => fetchProducts(currentPage)}
       />
 
       <EditProductModal
         open={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        onSuccess={fetchProducts}
+        onSuccess={() => fetchProducts(currentPage)}
         product={selectedProduct}
       />
 
       <DeleteProductModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onSuccess={fetchProducts}
+        onSuccess={() => fetchProducts(currentPage)}
         product={selectedProduct}
       />
 
       <RestoreProductModal
         open={restoreModalOpen}
         onClose={() => setRestoreModalOpen(false)}
-        onSuccess={fetchProducts}
+        onSuccess={() => fetchProducts(currentPage)}
         product={selectedProduct}
       />
 
       <UpdateStockModal
         open={stockModalOpen}
         onClose={() => setStockModalOpen(false)}
-        onSuccess={fetchProducts}
+        onSuccess={() => fetchProducts(currentPage)}
         product={selectedProduct}
       />
     </div>

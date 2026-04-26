@@ -12,3 +12,6 @@ export type {
 // Services
 export { getAllOrders } from "./services/getAllOrders.service";
 export { createOrder } from "./services/createOrder.service";
+export { getOrderById } from "./services/getOrderById.service";
+export { updateOrderStatus } from "./services/updateOrderStatus.service";
+export { cancelOrder } from "./services/cancelOrder.service";
