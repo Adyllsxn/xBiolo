@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Search, Menu, Moon, Sun, X } from 'lucide-react';
+import { Search, Menu, Moon, Sun, X } from 'lucide-react';
 import { TOPBAR_CONFIG } from '@/lib/constants';
 import { getMe, type User } from '@/lib/modules/account';
 
@@ -14,13 +14,8 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [notifOpen, setNotifOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: 'Novo pedido', description: 'Pedido #123 foi criado', time: 'há 5 min', read: false },
-    { id: 2, title: 'Produto em baixo estoque', description: 'Vestido Semba está com estoque baixo', time: 'há 1 hora', read: false },
-  ]);
 
   useEffect(() => {
     getMe()
@@ -50,18 +45,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
     setTheme(newTheme);
     localStorage.setItem('biolo-admin-theme', newTheme);
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAsRead = (id: number) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
   const getInitials = (name: string): string => {
@@ -122,66 +105,6 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-
-          <div className="relative">
-            <button
-              onClick={() => setNotifOpen(!notifOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 relative transition-all"
-              aria-label="Notificações"
-            >
-              <Bell size={18} />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-
-            <AnimatePresence>
-              {notifOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden z-50"
-                >
-                  <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Notificações</h3>
-                    {unreadCount > 0 && (
-                      <button
-                        onClick={markAllAsRead}
-                        className="text-xs text-orange-500 hover:text-orange-600 transition"
-                      >
-                        Marcar todas
-                      </button>
-                    )}
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="p-8 text-center text-gray-500">
-                        <Bell size={32} className="mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">Nenhuma notificação</p>
-                      </div>
-                    ) : (
-                      notifications.map((notif) => (
-                        <div
-                          key={notif.id}
-                          onClick={() => markAsRead(notif.id)}
-                          className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
-                            !notif.read ? 'bg-orange-50/50 dark:bg-orange-950/20' : ''
-                          }`}
-                        >
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">{notif.title}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{notif.description}</p>
-                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{notif.time}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
           <div className="hidden md:flex items-center gap-2 ml-2">
             {!loading && user && (
