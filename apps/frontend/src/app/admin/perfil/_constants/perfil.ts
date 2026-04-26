@@ -1,4 +1,4 @@
-import { FiUser, FiShield, FiCheckCircle, FiAlertCircle, } from 'react-icons/fi';
+import { FiUser, FiShield, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 
 export const PERFIL_CONFIG = {
   title: 'Meu Perfil',
@@ -25,8 +25,17 @@ export const PERFIL_CONFIG = {
       title: 'Segurança',
       description: 'Gerencie sua senha e segurança',
       icon: FiShield,
-      buttonText: 'Alterar senha',
-      helperText: 'Recomendamos trocar sua senha periodicamente por segurança',
+    },
+  },
+  
+  modal: {
+    edit: {
+      title: 'Editar perfil',
+      description: 'Altere suas informações pessoais',
+    },
+    password: {
+      title: 'Alterar senha',
+      description: 'Digite sua nova senha',
     },
   },
   
@@ -36,28 +45,31 @@ export const PERFIL_CONFIG = {
     },
     save: {
       text: 'Salvar alterações',
+      saving: 'Salvando...',
     },
     cancel: {
       text: 'Cancelar',
+    },
+    confirm: {
+      text: 'Confirmar',
     },
   },
   
   messages: {
     saveSuccess: 'Perfil atualizado com sucesso!',
-    saveError: 'Erro ao atualizar perfil. Tente novamente.',
+    passwordSuccess: 'Senha alterada com sucesso!',
+    error: 'Erro ao processar solicitação. Tente novamente.',
     loadError: 'Erro ao carregar perfil',
   },
   
   roles: {
     admin: {
       label: 'Administrador',
-      variant: 'default',
       color: 'text-orange-600',
       bg: 'bg-orange-100',
     },
     employee: {
       label: 'Funcionário',
-      variant: 'secondary',
       color: 'text-blue-600',
       bg: 'bg-blue-100',
     },
@@ -66,14 +78,12 @@ export const PERFIL_CONFIG = {
   status: {
     active: {
       label: 'Ativo',
-      variant: 'active',
       icon: FiCheckCircle,
       bg: 'bg-green-100',
       color: 'text-green-700',
     },
     inactive: {
       label: 'Inativo',
-      variant: 'destructive',
       icon: FiAlertCircle,
       bg: 'bg-red-100',
       color: 'text-red-700',

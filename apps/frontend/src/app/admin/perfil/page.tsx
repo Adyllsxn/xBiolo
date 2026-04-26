@@ -5,36 +5,34 @@ import { useRouter } from 'next/navigation';
 import { getMe, type User } from '@/lib/modules/account';
 import { ProfileHeader } from './_components/ProfileHeader';
 import { ProfileInfo } from './_components/ProfileInfo';
-import { ProfileForm } from './_components/ProfileForm';
-import { ProfileSecurity } from './_components/ProfileSecurity';
+import { ProfileActions } from './_components/ProfileActions';
+import { EditProfileModal } from './_modals/EditProfileModal';
+import { ChangePasswordModal } from './_modals/ChangePasswordModal';
 import { PERFIL_CONFIG } from './_constants/perfil';
 
 export default function PerfilPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      const data = await getMe();
+      setUser(data);
+    } catch (error) {
+      console.error(PERFIL_CONFIG.messages.loadError, error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const data = await getMe();
-        setUser(data);
-      } catch (error) {
-        console.error(PERFIL_CONFIG.messages.loadError, error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUser();
   }, []);
-
-  const handleSaveProfile = async (data: { name: string; email: string }) => {
-    // TODO: Implementar update do perfil
-    console.log('Salvando:', data);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    alert(PERFIL_CONFIG.messages.saveSuccess);
-  };
 
   if (loading) {
     return (
@@ -60,29 +58,39 @@ export default function PerfilPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-800">{PERFIL_CONFIG.title}</h1>
         <p className="text-gray-500 mt-1">{PERFIL_CONFIG.subtitle}</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        {/* Sidebar - Info Card */}
         <div className="md:col-span-1">
           <ProfileHeader name={user.name} email={user.email} />
           <ProfileInfo user={user} />
         </div>
 
-        {/* Main Content - Edit Form */}
-        <div className="md:col-span-2 space-y-6">
-          <ProfileForm 
-            name={user.name} 
-            email={user.email} 
-            onSave={handleSaveProfile} 
+        <div className="md:col-span-2">
+          <ProfileActions 
+            onEdit={() => setEditModalOpen(true)}
+            onChangePassword={() => setPasswordModalOpen(true)}
           />
-          <ProfileSecurity />
         </div>
       </div>
+
+      <EditProfileModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSuccess={fetchUser}
+        userId={user.id}
+        currentName={user.name}
+        currentEmail={user.email}
+      />
+
+      <ChangePasswordModal
+        open={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        onSuccess={() => {}}
+      />
     </div>
   );
 }
