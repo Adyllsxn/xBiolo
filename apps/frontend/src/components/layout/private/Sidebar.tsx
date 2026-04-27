@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState, useEffect, JSX } from 'react';
 import { IconType } from 'react-icons';
 import { SIDEBAR_CATEGORIES, SIDEBAR_STORE } from '@/lib/constants';
-import { logout } from '@/lib/modules/auth';
+import { logout, useAuth } from '@/lib/modules/auth';
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -28,6 +28,7 @@ interface NavItem {
 function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { role, isLoading } = useAuth();
   const { principal, definicoes, logout: logoutItem } = SIDEBAR_CATEGORIES;
 
   const isActive = (href: string): boolean => {
@@ -50,6 +51,17 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
       router.push('/auth/logout');
     }
   };
+
+  // Filtrar menus baseado no role
+  const visiblePrincipal = principal.filter(item => {
+    if (item.name === 'Utilizadores' && role !== 'admin') return false;
+    return true;
+  });
+
+  const visibleDefinicoes = definicoes.filter(item => {
+    if (item.name === 'Configurações' && role !== 'admin') return false;
+    return true;
+  });
 
   const renderNavItem = (item: NavItem, isLogout?: boolean): JSX.Element => {
     const Icon = item.icon;
@@ -116,6 +128,16 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
       {/* Logo */}
@@ -134,7 +156,7 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
 
       {/* Navigation - Principal */}
       <div className="flex-1 overflow-y-auto min-h-0 py-4">
-        {!collapsed && (
+        {!collapsed && visiblePrincipal.length > 0 && (
           <div className="px-3 mb-2">
             <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-2">
               Principal
@@ -142,11 +164,11 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
           </div>
         )}
         <div className="space-y-1 px-3 mb-6">
-          {principal.map((item: NavItem) => renderNavItem(item))}
+          {visiblePrincipal.map((item: NavItem) => renderNavItem(item))}
         </div>
 
         {/* Definições */}
-        {!collapsed && (
+        {visibleDefinicoes.length > 0 && !collapsed && (
           <div className="px-3 mb-2">
             <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-2">
               Definições
@@ -154,7 +176,7 @@ function SidebarContent({ collapsed, onClose }: SidebarContentProps) {
           </div>
         )}
         <div className="space-y-1 px-3">
-          {definicoes.map((item: NavItem) => renderNavItem(item))}
+          {visibleDefinicoes.map((item: NavItem) => renderNavItem(item))}
         </div>
       </div>
 

@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { FiEdit2, FiTrash2, FiRefreshCw } from 'react-icons/fi';
 import { CATEGORIAS_CONFIG } from '../_constants/categorias';
 import type { Category } from '@/lib/modules/category';
+import { usePermissions } from '@/lib/modules/auth';
 
 interface CategoryTableProps {
   categories: Category[];
@@ -22,6 +23,8 @@ interface CategoryTableProps {
 }
 
 export function CategoryTable({ categories, onEdit, onDelete, onRestore }: CategoryTableProps) {
+  const { canEdit } = usePermissions();
+
   const getStatusBadge = (category: Category) => {
     if (category.deletedAt) {
       return <Badge className={CATEGORIAS_CONFIG.status.deleted.className}>{CATEGORIAS_CONFIG.status.deleted.label}</Badge>;
@@ -42,7 +45,9 @@ export function CategoryTable({ categories, onEdit, onDelete, onRestore }: Categ
             <TableHead>{CATEGORIAS_CONFIG.table.columns.description}</TableHead>
             <TableHead>{CATEGORIAS_CONFIG.table.columns.order}</TableHead>
             <TableHead>{CATEGORIAS_CONFIG.table.columns.status}</TableHead>
-            <TableHead className="text-right">{CATEGORIAS_CONFIG.table.columns.actions}</TableHead>
+            {canEdit && (
+              <TableHead className="text-right">{CATEGORIAS_CONFIG.table.columns.actions}</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,35 +58,37 @@ export function CategoryTable({ categories, onEdit, onDelete, onRestore }: Categ
               <TableCell className="max-w-xs truncate">{category.description || '-'}</TableCell>
               <TableCell>{category.order}</TableCell>
               <TableCell>{getStatusBadge(category)}</TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onEdit(category)}
-                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                >
-                  <FiEdit2 className="w-4 h-4" />
-                </Button>
-                {category.deletedAt ? (
+              {canEdit && (
+                <TableCell className="text-right space-x-2">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onRestore(category)}
-                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    onClick={() => onEdit(category)}
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   >
-                    <FiRefreshCw className="w-4 h-4" />
+                    <FiEdit2 className="w-4 h-4" />
                   </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onDelete(category)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <FiTrash2 className="w-4 h-4" />
-                  </Button>
-                )}
-              </TableCell>
+                  {category.deletedAt ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onRestore(category)}
+                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+                    >
+                      <FiRefreshCw className="w-4 h-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDelete(category)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
