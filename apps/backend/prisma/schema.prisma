@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/infrastructure/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+enum OrderStatus {
+  pending
+  approved
+  delivered
+  cancelled
+}
+
+enum PaymentMethod {
+  card
+  cash
+}
+
+enum UserRole {
+  admin
+  employee
+}
+
+// ============================================
+// USERS (IDENTITY)
+// ============================================
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  password    String
+  role        UserRole  @default(employee)
+  active      Boolean   @default(true)
+  deletedAt   DateTime?
+  lastLogin   DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relações one-to-many
+  createdCategories Category[] @relation("CategoryCreator")
+  updatedCategories Category[] @relation("CategoryUpdater")
+  createdProducts   Product[]   @relation("ProductCreator")
+  updatedProducts   Product[]   @relation("ProductUpdater")
+  updatedOrders     Order[]     @relation("OrderUpdater")
+  
+  @@map("users")
+}
+
+// ============================================
+// CATEGORIAS
+// ============================================
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  deletedAt   DateTime?
+  
+  products    Product[]
+  
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("CategoryCreator", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("CategoryUpdater", fields: [updatedById], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("categories")
+}
+
+// ============================================
+// PRODUTOS
+// ============================================
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  price       Float    @default(0)
+  
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  variations  Json?    @default("[]")
+  imageUrl    String?
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  stock       Int      @default(0)
+  deletedAt   DateTime?
+  views       Int      @default(0)
+  
+  orderItems  OrderItem[]
+  
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("ProductCreator", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("ProductUpdater", fields: [updatedById], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([categoryId])
+  @@index([slug])
+  @@index([active])
+  @@index([deletedAt])
+  @@index([createdById])
+  @@index([updatedById])
+  @@map("products")
+}
+
+// ============================================
+// STORE (CONFIGURAÇÕES DA LOJA)
+// ============================================
+model Store {
+  id           String   @id @default(uuid())
+  name         String   @default("Biolo")
+  whatsapp     String   @default("244935751955")
+  email        String?
+  address      String?
+  logo         String?
+  primaryColor String   @default("#E05A2A")
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("stores")
+}
+
+// ============================================
+// PEDIDOS
+// ============================================
+model Order {
+  id            String        @id @default(uuid())
+  clientName    String
+  clientAddress String
+  clientPhone   String?
+  paymentMethod PaymentMethod
+  status        OrderStatus   @default(pending)
+  total         Float         @default(0)
+  
+  items         OrderItem[]
+  
+  updatedById   String?
+  updatedBy     User?         @relation("OrderUpdater", fields: [updatedById], references: [id])
+  
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([updatedById])
+  @@map("orders")
+}
+
+// ============================================
+// ITENS DO PEDIDO
+// ============================================
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  productId   String
+  productName String
+  quantity    Int
+  price       Float
+  variation   String?
+  
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
