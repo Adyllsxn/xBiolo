@@ -18,37 +18,37 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "Biolo - Catálogo digital com finalização no WhatsApp",
-    template: "%s | Biolo",
+    default: "Catálogo digital com finalização no WhatsApp",
+    template: "%s | Catálogo Digital",
   },
-  description: "Biolo é um catálogo digital para pequenos negócios em Angola. O cliente escolhe os produtos, bota na sacolinha e fecha o pedido direto no WhatsApp.",
-  keywords: ["catálogo digital", "WhatsApp", "Angola", "e-commerce", "pequenos negócios", "vender online"],
-  authors: [{ name: "Biolo" }],
-  creator: "Biolo",
-  publisher: "Biolo",
+  description: "Plataforma de catálogo digital onde o cliente escolhe produtos, adiciona ao carrinho e finaliza o pedido diretamente no WhatsApp.",
+  keywords: ["catálogo digital", "WhatsApp", "e-commerce", "carrinho de compras", "vendas online"],
+  authors: [{ name: "Adyllsxn" }],
+  creator: "Adyllsxn",
+  publisher: "Adyllsxn",
   robots: {
     index: true,
     follow: true,
   },
   openGraph: {
-    title: "Biolo - Catálogo digital",
+    title: "Catálogo digital - WhatsApp",
     description: "Compre produtos e receba o pedido no WhatsApp. Simples e rápido.",
-    url: "https://biolo.ao",
-    siteName: "Biolo",
-    locale: "pt_AO",
+    url: "https://github.com/Adyllsxn/xBiolo",
+    siteName: "Catálogo Digital",
+    locale: "pt_BR",
     type: "website",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Biolo - Catálogo digital",
+        alt: "Catálogo digital",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Biolo - Catálogo digital",
+    title: "Catálogo digital - WhatsApp",
     description: "Compre produtos e receba o pedido no WhatsApp.",
     images: ["/og-image.jpg"],
   },
@@ -71,7 +71,7 @@ export default function RootLayout({
 }>) {
   return (
     <html 
-      lang="pt-AO" 
+      lang="pt" 
       className={`${inter.variable} ${poppins.variable} h-full antialiased`}
       suppressHydrationWarning
     >
