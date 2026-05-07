@@ -12,15 +12,15 @@ export const FOOTER_INSTITUTIONAL = [
 ];
 
 export const FOOTER_CONTACT = [
-  { icon: FiPhone, text: '+244 923 456 789', href: 'tel:+244923456789' },
-  { icon: FiMail, text: 'biolo@biolo.ao', href: 'mailto:biolo@biolo.ao' },
+  { icon: FiPhone, text: '+244 900 000 000', href: 'tel:+244900000000' },
+  { icon: FiMail, text: 'biolo@biolo.ao', href: '' },
   { icon: FiMapPin, text: 'Luanda, Angola', href: 'https://maps.google.com' },
 ];
 
 export const FOOTER_SOCIAL = [
-  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244923456789' },
-  { name: 'Instagram', icon: FaInstagram, href: 'https://instagram.com/biolo' },
-  { name: 'Facebook', icon: FaFacebook, href: 'https://facebook.com/biolo' },
+  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244900000000' },
+  { name: 'Instagram', icon: FaInstagram, href: '' },
+  { name: 'Facebook', icon: FaFacebook, href: '' },
 ];
 
 export const FOOTER_NEWSLETTER = {

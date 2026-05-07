@@ -1,53 +1,53 @@
-import { FiHeart, FiTarget, FiEye, FiShoppingBag, FiUsers, FiTruck } from 'react-icons/fi';
+import { FiHeart, FiTarget, FiEye, FiShoppingBag, FiUsers, FiZap } from 'react-icons/fi';
 
 export const ABOUT_PAGE = {
   header: {
-    badge: 'Sobre nós',
-    titlePrefix: 'Conheça a',
-    titleHighlight: 'Biolo',
-    description: 'A plataforma que conecta pequenos negócios angolanos a clientes de forma simples e eficiente'
+    badge: 'Sobre',
+    titlePrefix: 'Conheça o',
+    titleHighlight: 'Projeto',
+    description: 'Plataforma de catálogo digital com integração via WhatsApp'
   },
   story: {
     icon: FiHeart,
-    badge: 'Nossa história',
-    titlePrefix: 'Como tudo',
+    badge: 'História',
+    titlePrefix: 'Como',
     titleHighlight: 'começou',
     paragraphs: [
-      'O Biolo nasceu da necessidade de ajudar pequenos negócios angolanos a terem presença digital. Vimos que muitos lojistas tinham dificuldade em mostrar seus produtos de forma profissional e alcançar mais clientes.',
-      'Foi assim que criamos o Biolo: uma plataforma simples, sem complicação, onde o cliente escolhe os produtos, bota na sacolinha e o pedido vai direto para o WhatsApp do lojista.'
+      'Este projeto nasceu da necessidade de soluções digitais para catálogos de produtos.',
+      'Uma plataforma simples onde o cliente escolhe produtos e finaliza pedidos diretamente no WhatsApp.'
     ]
   },
   mission: {
     icon: FiTarget,
-    titlePrefix: 'Nossa',
-    titleHighlight: 'missão',
-    description: 'Democratizar o acesso ao comércio digital em Angola, oferecendo uma plataforma simples, acessível e eficiente para pequenos negócios.'
+    titlePrefix: '',
+    titleHighlight: 'Missão',
+    description: 'Fornecer uma solução eficiente para catálogos digitais com integração via WhatsApp.'
   },
   vision: {
     icon: FiEye,
-    titlePrefix: 'Nossa',
-    titleHighlight: 'visão',
-    description: 'Ser a principal plataforma de catálogo digital para pequenos negócios em Angola, conectando lojistas e clientes de forma simples e eficiente.'
+    titlePrefix: '',
+    titleHighlight: 'Visão',
+    description: 'Ser uma referência em soluções de catálogo digital.'
   },
   values: {
-    titlePrefix: 'Nossos',
-    titleHighlight: 'valores',
-    subtitle: 'O que nos move e nos define',
+    titlePrefix: '',
+    titleHighlight: 'Valores',
+    subtitle: '',
     items: [
       {
         icon: FiShoppingBag,
         title: 'Simplicidade',
-        description: 'Comprar deve ser fácil, sem complicações'
+        description: 'Interface intuitiva'
       },
       {
         icon: FiUsers,
-        title: 'Comunidade',
-        description: 'Apoiamos pequenos negócios em Angola'
+        title: 'Tecnologia',
+        description: 'Solução moderna'
       },
       {
-        icon: FiTruck,
+        icon: FiZap,
         title: 'Agilidade',
-        description: 'Entregamos rápido em toda Luanda'
+        description: 'Processo rápido'
       }
     ]
   }

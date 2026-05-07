@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./docs/assets/logo.svg" alt="xBiolo Logo" width="35%" />
 
-  **Catálogo digital para pequenos negócios em Angola**
+  **Catálogo digital com finalização via WhatsApp**
   
   [![GitHub](https://img.shields.io/badge/github-xBiolo-181717?style=for-the-badge&logo=github)](https://github.com/Adyllsxn/xBiolo)
   [![Status](https://img.shields.io/badge/status-development-yellow?style=for-the-badge)](./docs/STATUS.md)
@@ -9,29 +9,21 @@
   
   <br/>
   
-  > O cliente escolhe os produtos, bota na sacolinha e fecha o pedido direto no WhatsApp.  
-  > Sem complicação, sem taxa, sem dor de cabeça.
+  > Cliente escolhe produtos, adiciona ao carrinho e finaliza o pedido diretamente no WhatsApp.
 </div>
 
 ---
 
 ## 📖 Sobre o Projeto
 
-> O **xBiolo** é uma plataforma de catálogo digital desenvolvida especialmente para pequenos negócios em Angola, oferecendo uma solução simples e eficiente para lojistas que desejam vender online sem complicações.
+> O **xBiolo** plataforma de catálogo digital para venda de produtos com integração via WhatsApp.
 
-### 🎯 Problemática
+### 🎯 Funcionalidades
 
 ```markdown
-⚠️ Pequenos negócios não têm presença digital profissional
-⚠️ Divulgação via WhatsApp é desorganizada (muitas fotos, confusão de preços)
-⚠️ Soluções existentes são caras ou complexas demais
-```
-
-### 💡 Solução
-```markdown
-✅ Catálogo digital organizado por categorias
-✅ Sacolinha (carrinho de compras)
-✅ Finalização direta no WhatsApp do lojista
+✅ Catálogo organizado por categorias
+✅ Carrinho de compras (sacolinha)
+✅ Finalização via WhatsApp
 ✅ Dashboard administrativo completo
 ```
 ---
@@ -41,7 +33,6 @@
 
 | Documento | Descrição |
 |-----------|------------|
-| [✨ Funcionalidades](./docs/FEATURES.md) | Detalhamento completo de todas as funcionalidades |
 | [🛠️ Tecnologias](./docs/TECH.md) | Stack tecnológica utilizada no projeto |
 
 ---
@@ -70,11 +61,11 @@
 
 ## 📄 Licença
 
-Este projeto é de **uso comercial**. Para pequenos negócios em Angola.
+> Este projeto está sob a licença MIT, o que significa que é de código aberto e pode ser utilizado livremente para fins académicos e comerciais, desde que mantidos os créditos.
 
 ```markdown
-🔒 Código fonte privado
-✅ Uso permitido apenas mediante assinatura
-❌ Proibida redistribuição não autorizada
+📚 Código aberto (open source)
+✅ Livre para uso académico
+🤝 Contribuições são bem-vindas
 ```
 ---
