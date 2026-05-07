@@ -5,15 +5,15 @@ export const CONTACT_INFO = [
   {
     icon: FiPhone,
     label: 'Telefone / WhatsApp',
-    value: '+244 923 456 789',
-    href: 'tel:+244923456789',
+    value: '+244 900 000 000',
+    href: 'tel:+244900000000',
     description: 'Segunda a Sábado, 8h às 18h'
   },
   {
     icon: FiMail,
     label: 'E-mail',
     value: 'biolo@biolo.ao',
-    href: 'mailto:biolo@biolo.ao',
+    href: 'mailto:xbiolo@xbiolo.ao',
     description: 'Respondemos em até 24h'
   },
   {
@@ -26,9 +26,9 @@ export const CONTACT_INFO = [
 ];
 
 export const SOCIAL_LINKS = [
-  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244923456789' },
-  { name: 'Instagram', icon: FaInstagram, href: 'https://instagram.com/biolo' },
-  { name: 'Facebook', icon: FaFacebook, href: 'https://facebook.com/biolo' }
+  { name: 'WhatsApp', icon: FaWhatsapp, href: 'https://wa.me/244900000000' },
+  { name: 'Instagram', icon: FaInstagram, href: '' },
+  { name: 'Facebook', icon: FaFacebook, href: '' }
 ];
 
 export const FAQ_PREVIEW = [

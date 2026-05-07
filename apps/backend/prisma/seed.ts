@@ -26,14 +26,14 @@ async function main() {
     await prisma.user.create({
       data: {
         name: 'Administrador',
-        email: 'admin@biolo.ao',
+        email: 'admin@xbiolo.ao',
         password: hashedPassword,
         role: 'admin',
         active: true,
       },
     });
     console.log('✅ Usuário Admin criado com sucesso');
-    console.log('   📧 Email: admin@biolo.ao');
+    console.log('   📧 Email: admin@xbiolo.ao');
     console.log('   🔑 Senha: admin123');
   } else {
     console.log('⚠️ Usuário Admin já existe');
@@ -47,9 +47,9 @@ async function main() {
   if (!existingStore) {
     await prisma.store.create({
       data: {
-        name: 'Biolo',
-        whatsapp: '244935751955',
-        email: 'biolo@biolo.ao',
+        name: 'xBiolo',
+        whatsapp: '244900000000',
+        email: 'xbiolo@xbiolo.ao',
         address: 'Luanda, Angola',
         primaryColor: '#E05A2A',
       },

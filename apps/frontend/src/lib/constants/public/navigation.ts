@@ -19,7 +19,7 @@ export const FOOTER_LINKS = {
 };
 
 export const SOCIAL_LINKS = [
-  { name: 'WhatsApp', icon: 'FaWhatsapp', href: 'https://wa.me/244935751955' },
-  { name: 'Instagram', icon: 'FaInstagram', href: 'https://instagram.com/biolo' },
-  { name: 'Facebook', icon: 'FaFacebook', href: 'https://facebook.com/biolo' },
+  { name: 'WhatsApp', icon: 'FaWhatsapp', href: '' },
+  { name: 'Instagram', icon: 'FaInstagram', href: '' },
+  { name: 'Facebook', icon: 'FaFacebook', href: '' },
 ];
