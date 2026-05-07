@@ -8,13 +8,11 @@
   [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
   
   <br/>
-  
-  > Cliente escolhe produtos, adiciona ao carrinho e finaliza o pedido diretamente no WhatsApp.
 </div>
 
 ---
 
-## 📖 Sobre o Projeto
+## **📖 SOBRE O PROJETO**
 
 > O **xBiolo** plataforma de catálogo digital para venda de produtos com integração via WhatsApp.
 
@@ -29,7 +27,7 @@
 ---
 
 
-## 📚 Documentação
+## **📚 DOCUMENTAÇÃO**
 
 | Documento | Descrição |
 |-----------|------------|
@@ -38,7 +36,7 @@
 
 ---
 
-## 📸 Demo
+## **📸 DEMO**
 
 
 <div align="center">
@@ -60,7 +58,7 @@
 
 ---
 
-## 📄 Licença
+## **📄 LICENÇA**
 
 > Este projeto está sob a licença MIT, o que significa que é de código aberto e pode ser utilizado livremente para fins académicos e comerciais, desde que mantidos os créditos.
 
