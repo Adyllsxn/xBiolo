@@ -34,6 +34,7 @@
 | Documento | Descrição |
 |-----------|------------|
 | [🛠️ Tecnologias](./docs/TECH.md) | Stack tecnológica utilizada no projeto |
+| [🚀 Setup](./docs/SETUP.md) | Como instalar e executar o projeto |
 
 ---
 
